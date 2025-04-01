@@ -864,7 +864,7 @@ function updateClock() {
 }
   
   // Set up intervals
-setInterval(updateClock, 100);       // Update clock every second
+setInterval(updateClock, 1000);       // Update clock every second
 setInterval(fetchTemperature, 300000); // Refresh temp every 5 min
 fetchTemperature();                   // Initial fetch
 updateClock();                        // Initial clock render
