@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AA PIT Tracker — Phase 7.0</title>
+<style>
+  :root {
+    --bg-light: #f0f2f5;
+    --bg-dark: #1e1e1e;
+    --text-light: white;
+    --text-dark: white;
+    --mainline-light: #cce4ff;
+    --mainline-dark: #0058aa;
+    --regional-light: #ffd6d6;
+    --regional-dark: #aa2a2a;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    font-family: -apple-system, sans-serif;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  #flight-form {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  input, button {
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  button {
+    background: transparent;
+    color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  #theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border: none;
+    background: none;
+    border-radius: 4px;
+    color: gray;
+    cursor: pointer;
+  }
+
+  .board {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #2c2c2c;
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 0;
+    box-shadow: 0 0 5px rgba(255,255,255,0.05);
+  }
+
+  .column h2,
+  .sub-section h3 {
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 2;
+    margin: 0 0 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .column[data-status="Needs Service"] .sub-section h3 {
+    top: 2.5rem;
+    z-index: 5;
+    background: #2c2c2c;
+  }
+
+  .count {
+    font-weight: bold;
+    font-size: 1.8rem;
+    opacity: 0.7;
+  }
+
+  .card-container,
+  .sub-section {
+    min-height: 50px;
+    padding: 5px;
+    border: 2px dashed transparent;
+    transition: border 0.2s ease;
+  }
+
+  .card-container.dragover,
+  .sub-section.dragover {
+    border-color: #339af0;
+    background: chartreuse;
+  }
+
+  .sub-section {
+    margin-top: 10px;
+  }
+
+  .card {
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    border-left: 6px solid transparent;
+    opacity: 1;
+    background-color: grey;
+  }
+
+  .card:active {
+    transform: scale(0.98);
+  }
+
+  .highlighted {
+    background-color: #eaffea !important;
+  }
+
+  body.dark .highlighted {
+    background-color: #264d26 !important;
+  }
+
+  .mainline {
+    background-color: var(--mainline-light);
+    border-left-color: var(--mainline-dark);
+  }
+
+  .regional {
+    background-color: var(--regional-light);
+    border-left-color: var(--regional-dark);
+  }
+
+  body.dark .mainline {
+    background-color: var(--mainline-dark);
+    color: #fff;
+    border-left-color: #00aaff;
+    border-left-width: 8px;
+  }
+
+  body.dark .regional {
+    background-color: var(--regional-dark);
+    color: #fff;
+    border-left-color: #ff6666;
+    border-left-width: 8px;
+  }
+
+  .flight-number {
+    flex: 1;
+    text-align: left;
+    font-size: 2.2rem;
+  }
+
+  .tail-input {
+    width: 5ch;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2.2rem;
+    border: none;
+    color: yellow;
+    background: transparent;
+  }
+
+  .gate-input {
+    width: 5ch;
+    text-align: left;
+    font-weight: bold;
+    font-size: 2.2rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+  }
+
+  .tail-input:focus,
+  .gate-input:focus {
+    background: #333;
+    border: 10px solid #aaa;
+    outline: none;
+  }
+
+  body.dark .tail-input:focus,
+  body.dark .gate-input:focus,
+  body.dark .gate-input {
+    background: transparent;
+    color: white;
+  }
+
+  .drag-handle {
+    width: 18px;
+    height: 50%;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.3),
+      rgba(255,255,255,0.3) 20px,
+      black 2px,
+      black 4px
+    );
+    cursor: grab;
+    align-self: stretch;
+    margin-left: auto;
+  }
+
+  .trash-zone {
+    border: 2px dashed #ff4d4f;
+    border-radius: 6px;
+    margin: 10px auto;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: #ff4d4f;
+    background: rgba(255, 77, 79, 0.05);
+    transition: background 0.2s ease;
+    width: 95%;
+  }
+
+  .trash-zone.dragover {
+    background: rgba(255, 77, 79, 0.2);
+  }
+
+  .footer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    background: #1e1e1e;
+    z-index: 1000;
+  }
+
+  .footer-controls button {
+    color: white;
+    background: #007aff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .live-clock {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: black;
+    color: white;
+    font-size: 2.4rem;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 999px;
+    z-index: 9999;
+    pointer-events: auto;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    min-width: 18ch;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .weather-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85vw;
+    height: 85vh;
+    background: black;
+    border: 2px solid white;
+    z-index: 10000;
+    border-radius: 12px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .weather-modal iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    transform: scale(0.9);
+    transform-origin: top left;
+  }
+
+  .weather-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: none;
+  }
+</style>
+</head>
+<body class="dark">
+  <button id="theme-toggle"></button>
+
+  <div id="flight-form">
+    <input id="flight-number" placeholder="Flight #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
+    <input id="tail-number" placeholder="Tail #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
+    <button id="add-btn">Add Flight</button>
+  </div>
+
+  <div class="board">
+    <div class="column" data-status="Arrived">
+      <h2>On The Ground <span class="count" id="count-OnGround"></span></h2>
+      <div class="card-container" id="OnGround"></div>
+      <h2>In The Air  <span class="count" id="count-UpNext"></span></h2>
+      <div class="card-container" id="UpNext"></div>
+      <h2>Scheduled <span class="count" id="count-Scheduled"></span></h2>
+      <div class="card-container" id="Scheduled"></div>
+    </div>
+
+    <div class="column" data-status="Serviced">
+      <h2>Fully Serviced <span class="count" id="count-Serviced"></span></h2>
+      <div class="card-container" id="Serviced"></div>
+    </div>
+
+    <div class="column" data-status="Needs Service">
+      <h2>Not Serviced <span class="count" id="count-NeedsService"></span></h2>
+      <div id="Needs Service">
+        <div class="sub-section" id="Needs Water"><h3>Needs Water Filled<span class="count" id="count-NeedsWater"></span></h3></div>
+        <div class="sub-section" id="Needs Lav"><h3>Needs Lav Dumped<span class="count" id="count-NeedsLav"></span></h3></div>
+        <div class="sub-section" id="Needs Both"><h3>Needs Full Service <span class="count" id="count-NeedsBoth"></span></h3></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="trash-zone" id="trash">Drag Here to Delete</div>
+
+  <div class="footer-controls">
+    <button onclick="downloadReport()">Export Report</button>
+    <button onclick="clearAll()">Clear All Flights</button>
+  </div>
+
+  <div class="live-clock" id="live-clock">--ºF --:--:--</div>
+  <div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
+  <div class="weather-modal" id="weather-modal" style="display: none;">
+    <iframe src="https://wttr.in/KPIT?m" title="KPIT Weather"></iframe>
+  </div>
+
+<script>
+window.onload = () => {
+  const flightInput = document.getElementById('flight-number');
+  const tailInput = document.getElementById('tail-number');
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+  let cards = [];
+
+  if (localStorage.getItem('theme') === 'dark') body.classList.add('dark');
+  themeToggle.onclick = () => {
+    body.classList.toggle('dark');
+    localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+  };
+
+  try {
+    const stored = JSON.parse(localStorage.getItem('flightCards'));
+    if (Array.isArray(stored)) cards = stored;
+  } catch {}
+
+  document.getElementById('add-btn').onclick = () => {
+    const flight = flightInput.value.trim().toUpperCase();
+    const tail = tailInput.value.trim().toUpperCase();
+    if (!flight) return;
+    if (cards.some(c => c.flight === flight)) return alert("Flight exists.");
+    const dup = cards.find(c => c.tail === tail && tail !== "");
+    if (dup && !confirm("Replace existing tail?")) return;
+    if (dup) cards = cards.filter(c => c.id !== dup.id);
+    const newCard = { id: Date.now().toString(), flight, tail, gate: '', status: 'Scheduled', serviceType: null, eta: null };
+    cards.push(newCard);
+    saveCards();
+    renderCards(newCard.id);
+    flightInput.value = '';
+    tailInput.value = '';
+  };
+
+  function saveCards() {
+    localStorage.setItem('flightCards', JSON.stringify(cards));
+  }
+
+  function getFlightClass(flight) {
+    const num = parseInt(flight.replace(/[^\d]/g, ''));
+    return (num >= 1 && num <= 2949) || (num >= 6300 && num <= 6349) ? 'mainline' : 'regional';
+  }
+
+  function formatCountdown(ms) {
+    const neg = ms < 0;
+    ms = Math.abs(ms);
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    return (neg ? '-' : '') + `${h}:${m.toString().padStart(2, '0')}`;
+  }
+
+  function parseETAInput(input) {
+    input = input.replace(/\s+/g, '');
+    if (/^\d{4}$/.test(input)) {
+      return [input.slice(0, 2), input.slice(2)];
+    } else if (/^\d{1,2}:\d{2}$/.test(input)) {
+      return input.split(':');
+    }
+    return null;
+  }
+
+function renderCards(highlightId = null) {
+  const zones = ['OnGround', 'Scheduled', 'UpNext', 'Serviced'];
+  const subs = ['Needs Water', 'Needs Lav', 'Needs Both'];
+  zones.forEach(z => document.getElementById(z).innerHTML = '');
+  subs.forEach(s => {
+    document.getElementById(s).innerHTML = `<h3>${s} <span class="count" id="count-${s.replace(" ", "")}"></span></h3>`;
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      document.getElementById('flight-number').focus();
+    }
+  });
+
+  let needsServiceTotal = 0;
+
+  cards.sort((a, b) => {
+    if (a.status === 'Arrived' && b.status === 'Arrived') {
+      return new Date(a.eta || 0) - new Date(b.eta || 0);
+    }
+    if (a.status === 'Serviced' && b.status === 'Serviced') {
+      return (a.servicedAt || '').localeCompare(b.servicedAt || '');
+    }
+    return 0;
+  });
+
+  cards.forEach(card => {
+    const div = document.createElement('div');
+    div.className = `card ${getFlightClass(card.flight)}`;
+    div.dataset.id = card.id;
+    div.draggable = true;
+    if (card.id === highlightId) div.classList.add('highlighted');
+
+    const flightSpan = document.createElement('span');
+    flightSpan.className = 'flight-number';
+    flightSpan.textContent = card.flight;
+
+    const tailField = document.createElement('input');
+    tailField.className = 'tail-input';
+    tailField.value = card.tail;
+    tailField.maxLength = 4;
+    tailField.placeholder = 'TAIL';
+    tailField.onchange = () => updateTail(card.id, tailField.value);
+    tailField.onclick = () => tailField.select();
+
+    const gateField = document.createElement('input');
+    gateField.className = 'gate-input';
+    gateField.value = card.gate || '';
+    gateField.maxLength = 4;
+    gateField.placeholder = 'GATE';
+    gateField.onchange = () => updateGate(card.id, gateField.value);
+    gateField.onclick = () => gateField.select();
+
+    const handle = document.createElement('div');
+    handle.className = 'drag-handle';
+
+    const timer = document.createElement('div');
+    timer.className = 'eta-timer';
+    timer.style.marginLeft = 'auto';
+    timer.style.fontWeight = 'bold';
+    timer.style.cursor = 'pointer';
+    timer.style.fontSize = '1.8rem';
+
+    if (card.status === 'Arrived') {
+      const update = () => {
+        if (!card.eta) return;
+        const diff = new Date(card.eta) - new Date();
+        timer.textContent = formatCountdown(diff);
+        timer.style.animation = Math.abs(diff) < 180000 ? 'flash-orange 1s infinite alternate' : '';
+      };
+
+      timer.onclick = () => {
+        const current = card.eta ? new Date(card.eta) : null;
+        const placeholder = current ? current.getHours().toString().padStart(2, '0') + ':' + current.getMinutes().toString().padStart(2, '0') : '';
+        const newEtaInput = prompt("Update ETA (HHMM or HH:MM):", placeholder);
+        const parts = parseETAInput(newEtaInput || '');
+        if (parts) {
+          const [h, m] = parts.map(Number);
+          const now = new Date();
+          const etaDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+          if (etaDate < now) etaDate.setDate(etaDate.getDate() + 1);
+          card.eta = etaDate.toISOString();
+          saveCards();
+          renderCards();
+        } else {
+          alert("Invalid format. Use HHMM or HH:MM");
+        }
+      };
+
+      update();
+      setInterval(update, 60000);
+    }
+
+    handle.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+      div.dispatchEvent(new DragEvent("dragstart", { dataTransfer: new DataTransfer() }));
+    });
+
+    handle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      div.dispatchEvent(new DragEvent("dragstart", { dataTransfer: new DataTransfer() }));
+    });
+
+    div.appendChild(flightSpan);
+    div.appendChild(tailField);
+    if (card.status === 'Serviced' && card.servicedAt) {
+      const timestamp = document.createElement('span');
+      timestamp.textContent = card.servicedAt;
+      timestamp.style.fontSize = '2.2rem';
+      timestamp.style.color = 'turquoise';
+      timestamp.style.margin = '0 4px';
+      div.appendChild(timestamp);
+    }
+    div.appendChild(gateField);
+    if (card.status === 'Arrived') div.appendChild(timer);
+    div.appendChild(handle);
+
+    div.addEventListener('dragstart', e => {
+      div.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', card.id);
+    });
+
+    div.addEventListener('dragend', () => div.classList.remove('dragging'));
+
+    let sectionId = card.status;
+    if (sectionId === 'Arrived' && card.eta) {
+      sectionId = 'UpNext';
+    } else if (sectionId === 'Arrived' && !card.eta) {
+      sectionId = 'OnGround';
+    }
+
+    const section = card.status === 'Needs Service'
+      ? document.getElementById(card.serviceType || 'Needs Water')
+      : document.getElementById(sectionId);
+
+    if (section) {
+      section.appendChild(div);
+      if (card.status === 'Needs Service') needsServiceTotal++;
+    }
+
+    if (card.id === highlightId) {
+      setTimeout(() => div.classList.remove('highlighted'), 1000);
+    }
+  });
+
+  document.getElementById('count-NeedsService').innerText = needsServiceTotal;
+  document.getElementById('count-NeedsWater').innerText = document.getElementById('Needs Water').querySelectorAll('.card').length;
+  document.getElementById('count-NeedsLav').innerText = document.getElementById('Needs Lav').querySelectorAll('.card').length;
+  document.getElementById('count-NeedsBoth').innerText = document.getElementById('Needs Both').querySelectorAll('.card').length;
+  ['OnGround', 'Scheduled', 'UpNext', 'Serviced'].forEach(z => {
+    const count = document.getElementById(z).querySelectorAll('.card').length;
+    document.getElementById('count-' + z).innerText = count;
+  });
+
+  bindDropZones();
+}
+
+  window.updateTail = (id, value) => {
+    const c = cards.find(c => c.id === id);
+    if (!c) return;
+    const newTail = value.trim().toUpperCase();
+    const dup = cards.find(x => x.tail === newTail && x.id !== id);
+    if (dup && !confirm("Replace existing tail?")) return renderCards();
+    cards = cards.filter(x => x.id !== (dup?.id || ""));
+    c.tail = newTail;
+    saveCards(); renderCards();
+  };
+
+  window.updateGate = (id, value) => {
+    const c = cards.find(c => c.id === id);
+    if (c) {
+      c.gate = value.trim().toUpperCase();
+      saveCards();
+    }
+  };
+
+  function bindDropZones() {
+    const allZones = [...document.querySelectorAll('.card-container, .sub-section')];
+    allZones.forEach(container => {
+      container.ondragover = (e) => {
+        e.preventDefault();
+        container.classList.add('dragover');
+        const dragging = document.querySelector('.dragging');
+        const after = getDragAfterElement(container, e.clientY);
+        if (!after) container.appendChild(dragging);
+        else container.insertBefore(dragging, after);
+      };
+      container.ondragleave = () => container.classList.remove('dragover');
+      container.ondrop = (e) => {
+        e.preventDefault();
+        container.classList.remove('dragover');
+        const id = e.dataTransfer.getData('text/plain');
+        const card = cards.find(c => c.id === id);
+        if (!card) return;
+        const column = container.closest('.column')?.getAttribute('data-status');
+        const isSub = container.classList.contains('sub-section');
+        const targetId = container.id;
+let newStatus = column;
+if (column === 'Arrived') {
+  if (targetId === 'UpNext') {
+    newStatus = 'Arrived';
+  } else if (targetId === 'OnGround') {
+    newStatus = 'Arrived';
+    card.eta = null; // Clear ETA
+  } else if (targetId === 'Scheduled') {
+    newStatus = 'Scheduled';
+  }
+}        if (newStatus === 'Arrived' && card.status !== 'Arrived') {
+          const etaInput = prompt("Enter ETA (HHMM or HH:MM):");
+          const parts = parseETAInput(etaInput || '');
+          if (parts) {
+            const [h, m] = parts.map(Number);
+            const now = new Date();
+            const etaDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+            if (etaDate < now) etaDate.setDate(etaDate.getDate() + 1);
+            card.eta = etaDate.toISOString();
+          } else {
+            alert("Invalid format. Use HHMM or HH:MM");
+          }
+        }
+
+        card.status = newStatus;
+        card.serviceType = isSub ? targetId : null;
+
+        if (newStatus === 'Serviced') {
+          const now = new Date();
+          card.servicedAt = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        } else {
+          delete card.servicedAt;
+        }
+
+        const reorderedIds = Array.from(container.querySelectorAll('.card')).map(c => c.dataset.id);
+        const reordered = reorderedIds.map(id => cards.find(c => c.id === id));
+        const otherCards = cards.filter(c => !reorderedIds.includes(c.id));
+        cards = [...otherCards, ...reordered];
+        saveCards(); renderCards();
+      };
+    });
+
+    const trash = document.getElementById('trash');
+    trash.ondragover = (e) => {
+      e.preventDefault();
+      trash.classList.add('dragover');
+    };
+    trash.ondragleave = () => trash.classList.remove('dragover');
+    trash.ondrop = (e) => {
+      e.preventDefault();
+      trash.classList.remove('dragover');
+      const id = e.dataTransfer.getData('text/plain');
+      const card = cards.find(c => c.id === id);
+      if (!card) return;
+      if (confirm(`Delete flight ${card.flight}?`)) {
+        cards = cards.filter(c => c.id !== id);
+        saveCards();
+        renderCards();
+      }
+    };
+  }
+
+  function getDragAfterElement(container, y) {
+    const cards = [...container.querySelectorAll('.card:not(.dragging)')];
+    return cards.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      return (offset < 0 && offset > closest.offset) ? { offset, element: child } : closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  window.clearAll = () => {
+    if (confirm("Clear all saved flights?")) {
+      localStorage.removeItem('flightCards');
+      cards = [];
+      renderCards();
+    }
+  };
+
+  ['flight-number', 'tail-number'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('add-btn').click();
+      }
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const isCardField = e.target.classList.contains('tail-input') || e.target.classList.contains('gate-input');
+    if (e.key === 'Enter' && isCardField) {
+      e.preventDefault();
+      e.target.blur();
+    }
+  });
+
+  renderCards();
+};
+
+// Export Report Functions
+function generateReport() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const title = `Lav Report - ${yyyy}${mm}${dd}`;
+
+  let report = `Station: PIT - PM/RON\nEmployee #: 933998\n${title}\n\n`;
+
+  const sections = [
+    { id: 'Serviced', label: 'Fully Serviced' },
+    { id: 'Needs Water', label: 'Needs Water Filled', parent: 'Not Serviced' },
+    { id: 'Needs Lav', label: 'Needs Lav Dumped', parent: 'Not Serviced' },
+    { id: 'Needs Both', label: 'Needs Full Service', parent: 'Not Serviced' }
+  ];
+
+  sections.forEach(section => {
+    if (section.parent) {
+      report += `\n${section.parent}\n  ${section.label}\n`;
+    } else {
+      report += `\n${section.label}\n`;
+    }
+
+    const cards = document.getElementById(section.id)?.querySelectorAll('.card') || [];
+
+    cards.forEach(card => {
+      const flight = card.querySelector('.flight-number')?.textContent || '';
+      const tail = card.querySelector('.tail-input')?.value || '';
+      const gate = card.querySelector('.gate-input')?.value || '';
+      const timestampEl = Array.from(card.querySelectorAll('span')).find(el => el.textContent.includes(':'));
+      const timestamp = timestampEl ? timestampEl.textContent.trim() : '';
+
+      if (section.id === 'Serviced') {
+        report += `    ${flight}_${tail}_${timestamp}_${gate}\n`;
+      } else {
+        report += `    ${flight}_${tail}_${gate}\n`;
+      }
+    });
+  });
+
+  return { title, text: report };
+}
+
+function downloadReport() {
+  const { title, text } = generateReport();
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${title}.txt`;
+  a.click();
+}
+
+let currentTemp = '...';
+
+async function fetchTemperature() {
+  try {
+    const res = await fetch('https://wttr.in/KPIT?format=%t');
+    const text = await res.text();
+    currentTemp = text.trim();
+  } catch (err) {
+    currentTemp = '??ºF';
+  }
+}
+
+// Update time + temp display
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2, '0');
+  const m = now.getMinutes().toString().padStart(2, '0');
+  const s = now.getSeconds().toString().padStart(2, '0');
+  document.getElementById('live-clock').textContent = `${currentTemp} ${h}:${m}:${s}`;
+}
+
+// Set up intervals
+setInterval(updateClock, 1000);       // Update clock every second
+setInterval(fetchTemperature, 300000); // Refresh temp every 5 min
+fetchTemperature();                   // Initial fetch
+updateClock();                        // Initial clock render
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const clock = document.getElementById("live-clock");
+  const modal = document.getElementById("weather-modal");
+  const overlay = document.getElementById("weather-overlay");
+
+  clock.addEventListener("click", () => {
+    modal.style.display = "block";
+    overlay.style.display = "block";
+  });
+
+  overlay.addEventListener("click", () => {
+    modal.style.display = "none";
+    overlay.style.display = "none";
+  });
+});
+</script>
+<div class="live-clock" id="live-clock">--ºF --:--:--</div>
+
+<div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
+<div class="weather-modal" id="weather-modal" style="display: none;">
+  <iframe src="https://wttr.in/KPIT?m" title="KPIT Weather"></iframe>
+</div>
+</body>
+</html>
