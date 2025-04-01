@@ -84,6 +84,20 @@
     box-shadow: 0 0 5px rgba(255,255,255,0.05);
   }
 
+  .section-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+  }
+
+  .section-group:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .section-group .card-container {
+    flex-shrink: 0;
+  }
+
   .column h2,
   .sub-section h3 {
     position: sticky;
@@ -316,14 +330,6 @@
     z-index: 9999;
     display: none;
   }
-  
-  .column[data-status="Arrived"] h2 {
-  margin-top: 20px;
-}
-
-.column[data-status="Arrived"] h2:first-of-type {
-  margin-top: 0;
-}
 </style>
 </head>
 <body class="dark">
@@ -336,15 +342,23 @@
   </div>
 
   <div class="board">
-    <div class="column" data-status="Arrived">
-      <h2>On The Ground <span class="count" id="count-OnGround"></span></h2>
-      <div class="card-container" id="OnGround"></div>
-      <h2>In The Air  <span class="count" id="count-UpNext"></span></h2>
-      <div class="card-container" id="UpNext"></div>
-      <h2>Scheduled <span class="count" id="count-Scheduled"></span></h2>
-      <div class="card-container" id="Scheduled"></div>
-    </div>
+<div class="column" data-status="Arrived">
+  <div class="section-group">
+    <h2>On The Ground <span class="count" id="count-OnGround"></span></h2>
+    <div class="card-container" id="OnGround"></div>
+  </div>
 
+  <div class="section-group">
+    <h2>In The Air <span class="count" id="count-UpNext"></span></h2>
+    <div class="card-container" id="UpNext"></div>
+  </div>
+
+  <div class="section-group">
+    <h2>Scheduled <span class="count" id="count-Scheduled"></span></h2>
+    <div class="card-container" id="Scheduled"></div>
+  </div>
+</div>
+    
     <div class="column" data-status="Serviced">
       <h2>Fully Serviced <span class="count" id="count-Serviced"></span></h2>
       <div class="card-container" id="Serviced"></div>
