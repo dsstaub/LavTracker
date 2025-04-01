@@ -4,10 +4,8 @@
   <title>AA PIT Tracker — Phase 7.0</title>
 <style>
   :root {
-    --bg-light: #f0f2f5;
-    --bg-dark: #1e1e1e;
-    --text-light: white;
-    --text-dark: white;
+    --bg: #1e1e1e;
+    --text: white;
     --mainline-light: #cce4ff;
     --mainline-dark: #0058aa;
     --regional-light: #ffd6d6;
@@ -24,21 +22,10 @@
   body {
     display: flex;
     flex-direction: column;
-    background: var(--bg-dark);
-    color: var(--text-light);
+    background: var(--bg);
+    color: var(--text);
     font-family: -apple-system, sans-serif;
-    transition: background 0.3s, color 0.3s;
   }
-
-  .column h2,
-.sub-section h3 {
-  background-color: #2c2c2c; /* Match dark mode column background */
-}
-
-body:not(.dark) .column h2,
-body:not(.dark) .sub-section h3 {
-  background-color: white; /* Light mode fallback if needed */
-}
 
   #flight-form {
     padding: 10px;
@@ -61,16 +48,7 @@ body:not(.dark) .sub-section h3 {
   }
 
   #theme-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 6px 10px;
-    font-size: 0.9rem;
-    border: none;
-    background: none;
-    border-radius: 4px;
-    color: gray;
-    cursor: pointer;
+    display: none;
   }
 
   .board {
@@ -112,8 +90,8 @@ body:not(.dark) .sub-section h3 {
   .sub-section h3 {
     position: sticky;
     top: 0;
-    background: inherit;
     z-index: 2;
+    background-color: #2c2c2c;
     margin: 0 0 5px 0;
     display: flex;
     justify-content: space-between;
@@ -122,8 +100,6 @@ body:not(.dark) .sub-section h3 {
 
   .column[data-status="Needs Service"] .sub-section h3 {
     top: 2.5rem;
-    z-index: 5;
-    background: #2c2c2c;
   }
 
   .count {
@@ -169,10 +145,6 @@ body:not(.dark) .sub-section h3 {
   }
 
   .highlighted {
-    background-color: #eaffea !important;
-  }
-
-  body.dark .highlighted {
     background-color: #264d26 !important;
   }
 
@@ -186,14 +158,14 @@ body:not(.dark) .sub-section h3 {
     border-left-color: var(--regional-dark);
   }
 
-  body.dark .mainline {
+  .mainline.dark {
     background-color: var(--mainline-dark);
     color: #fff;
     border-left-color: #00aaff;
     border-left-width: 8px;
   }
 
-  body.dark .regional {
+  .regional.dark {
     background-color: var(--regional-dark);
     color: #fff;
     border-left-color: #ff6666;
@@ -231,13 +203,6 @@ body:not(.dark) .sub-section h3 {
     background: #333;
     border: 10px solid #aaa;
     outline: none;
-  }
-
-  body.dark .tail-input:focus,
-  body.dark .gate-input:focus,
-  body.dark .gate-input {
-    background: transparent;
-    color: white;
   }
 
   .drag-handle {
