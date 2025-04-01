@@ -72,7 +72,7 @@
   .board {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: 1fr 1.2fr 0.9fr;
+    grid-template-columns: 1fr 1.5fr 0.8fr;
     gap: 10px;
     padding: 10px;
     overflow: hidden;
@@ -82,10 +82,7 @@
 
   .column {
     display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: stretch;
-  justify-content: flex-start;
+    flex-direction: column;
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
@@ -93,6 +90,10 @@
     border-radius: 8px;
     padding: 10px;
     box-shadow: 0 0 5px rgba(255,255,255,0.05);
+  }
+
+  .column[data-status="Arrived"] {
+    gap: 16px;
   }
 
   .column h2,
@@ -119,10 +120,6 @@
     opacity: 0.7;
   }
 
-.card-container + .card-container {
-  margin-top: 10px;
-}
-  
   .card-container,
   .sub-section {
     display: flex;
@@ -141,8 +138,22 @@
     background: chartreuse;
   }
 
-  .sub-section {
+  .card-container {
+    margin-bottom: 0;
+  }
+
+  .card-container + .card-container {
     margin-top: 10px;
+  }
+
+  .sub-section + .sub-section {
+    margin-top: 10px;
+  }
+
+  #Needs\ Service {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .card {
