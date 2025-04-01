@@ -19,11 +19,6 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    box-sizing: border-box;
-  }
-
-  * {
-    box-sizing: inherit;
   }
 
   body {
@@ -31,8 +26,7 @@
     flex-direction: column;
     background: var(--bg-dark);
     color: var(--text-light);
-    font-family: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
-    font-weight: bold;
+    font-family: -apple-system, sans-serif;
     transition: background 0.3s, color 0.3s;
   }
 
@@ -72,28 +66,22 @@
   .board {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: 1fr 1.5fr 0.8fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     padding: 10px;
     overflow: hidden;
     min-height: 0;
-    max-width: 100vw;
   }
 
   .column {
     display: flex;
     flex-direction: column;
-    min-height: 0;
     overflow-y: auto;
-    overflow-x: hidden;
     background: #2c2c2c;
     border-radius: 8px;
     padding: 10px;
+    min-height: 0;
     box-shadow: 0 0 5px rgba(255,255,255,0.05);
-  }
-
-  .column[data-status="Arrived"] {
-    gap: 16px;
   }
 
   .column h2,
@@ -122,14 +110,10 @@
 
   .card-container,
   .sub-section {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
     min-height: 50px;
     padding: 5px;
     border: 2px dashed transparent;
     transition: border 0.2s ease;
-    overflow: visible;
   }
 
   .card-container.dragover,
@@ -138,37 +122,22 @@
     background: chartreuse;
   }
 
-  .card-container {
-    margin-bottom: 0;
-  }
-
-  .card-container + .card-container {
+  .sub-section {
     margin-top: 10px;
-  }
-
-  .sub-section + .sub-section {
-    margin-top: 10px;
-  }
-
-  #Needs\ Service {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
   }
 
   .card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: grey;
     border-radius: 4px;
     padding: 5px 10px;
     font-weight: bold;
-    border-left: 6px solid transparent;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     position: relative;
-    flex-wrap: wrap;
-    max-width: 100%;
-    word-break: break-word;
+    border-left: 6px solid transparent;
+    opacity: 1;
+    background-color: grey;
   }
 
   .card:active {
@@ -207,29 +176,29 @@
     border-left-width: 8px;
   }
 
-  .flight-number,
-  .tail-input,
-  .gate-input,
-  .card span,
-  .card input {
+  .flight-number {
+    flex: 1;
+    text-align: left;
     font-size: 2.2rem;
-    font-family: 'SF Mono', 'Roboto Mono', 'Courier New', monospace;
-    font-weight: bold;
-    line-height: 1.1;
-    word-break: break-word;
-    flex-shrink: 1;
   }
 
-  .tail-input,
-  .gate-input {
+  .tail-input {
     width: 5ch;
     text-align: center;
+    font-weight: bold;
+    font-size: 2.2rem;
     border: none;
-    background: transparent;
     color: yellow;
+    background: transparent;
   }
 
   .gate-input {
+    width: 5ch;
+    text-align: left;
+    font-weight: bold;
+    font-size: 2.2rem;
+    border: none;
+    background: transparent;
     color: inherit;
   }
 
