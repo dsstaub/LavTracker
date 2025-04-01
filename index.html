@@ -840,8 +840,8 @@ function updateClock() {
   const m = now.getMinutes().toString().padStart(2, '0');
   const s = now.getSeconds().toString().padStart(2, '0');
 
-  const colonHM = (s % 2 === 0) ? ':' : '<span style="color:black">:</span>';
-  const colonMS = (s % 2 !== 0) ? ':' : '<span style="color:black">:</span>';
+  const showColons = now.getMilliseconds() < 500;
+  const colon = showColons ? ':' : '<span style="visibility:hidden">:</span>';
 
   const tempStyle = currentTemp === '??ºF'
     ? `style="color: ${now.getSeconds() % 2 === 0 ? 'red' : 'white'}"`
@@ -849,13 +849,13 @@ function updateClock() {
 
   const clockHTML = `
     <span ${tempStyle}>${currentTemp}</span>
-    ${h}${colonHM}${m}${colonMS}${s}
+    ${h}${colon}${m}${colon}${s}
   `;
 
   document.getElementById('live-clock').innerHTML = clockHTML;
 }
-// Set up intervals
-setInterval(updateClock, 1000);       // Update clock every second
+  // Set up intervals
+setInterval(updateClock, 100);       // Update clock every second
 setInterval(fetchTemperature, 300000); // Refresh temp every 5 min
 fetchTemperature();                   // Initial fetch
 updateClock();                        // Initial clock render
