@@ -316,6 +316,15 @@
     cursor: pointer;
   }
 
+  @keyframes fadeBlink {
+  0%   { color: white; }
+  100% { color: black; }
+}
+
+.blinking-colon {
+  animation: fadeBlink 1s steps(1, end) infinite;
+}
+
   .weather-modal {
     position: fixed;
     top: 50%;
@@ -840,12 +849,11 @@ function updateClock() {
   const m = now.getMinutes().toString().padStart(2, '0');
   const s = now.getSeconds().toString().padStart(2, '0');
 
-  const showColons = now.getMilliseconds() < 500;
-  const colon = showColons ? ':' : '<span style="visibility:hidden">:</span>';
-
   const tempStyle = currentTemp === '??ºF'
     ? `style="color: ${now.getSeconds() % 2 === 0 ? 'red' : 'white'}"`
     : '';
+
+  const colon = `<span class="blinking-colon">:</span>`;
 
   const clockHTML = `
     <span ${tempStyle}>${currentTemp}</span>
@@ -854,6 +862,7 @@ function updateClock() {
 
   document.getElementById('live-clock').innerHTML = clockHTML;
 }
+  
   // Set up intervals
 setInterval(updateClock, 100);       // Update clock every second
 setInterval(fetchTemperature, 300000); // Refresh temp every 5 min
