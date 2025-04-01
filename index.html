@@ -317,13 +317,14 @@
   }
 
 
-.blinking-colon {
-  animation: fadeBlink 1s steps(1, end) infinite;
-  @keyframes fadeBlink {
+@keyframes fadeBlink {
   0%   { color: white; }
   100% { color: black; }
 }
 
+.blinking-colon {
+  animation: fadeBlink 10s steps(1, end) infinite;
+}
   .weather-modal {
     position: fixed;
     top: 50%;
