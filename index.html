@@ -30,6 +30,16 @@
     transition: background 0.3s, color 0.3s;
   }
 
+  .column h2,
+.sub-section h3 {
+  background-color: #2c2c2c; /* Match dark mode column background */
+}
+
+body:not(.dark) .column h2,
+body:not(.dark) .sub-section h3 {
+  background-color: white; /* Light mode fallback if needed */
+}
+
   #flight-form {
     padding: 10px;
     display: flex;
