@@ -99,6 +99,7 @@
   justify-content: space-between;
   align-items: center;
 }
+
   .column[data-status="Needs Service"] .sub-section h3 {
     top: 2.5rem;
   }
@@ -169,8 +170,30 @@
   margin-left: auto;
   font-size: 2.2rem;
 }  
+
+.card.not-serviced-card {
+  gap: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.card.not-serviced-card .flight-number {
+  flex: 0 1 auto;
+  max-width: 5ch;
+}
+
+.card.not-serviced-card .tail-input {
+  flex: 0 0 auto;
+  width: 3ch;
+}
+
+.card.not-serviced-card .gate-input {
+  flex: 0 0 auto;
+  width: 3ch;
+}
+  
   .card:active {
-    transform: scale(1.5);
+    transform: scale(0.85);
   }
 
   .highlighted {
@@ -471,7 +494,10 @@ function renderCards(highlightId = null) {
 
   cards.forEach(card => {
     const div = document.createElement('div');
-    div.className = `card ${getFlightClass(card.flight)} ${card.status === 'Arrived' && card.eta ? 'in-the-air' : ''}`;
+    let cardClass = `card ${getFlightClass(card.flight)}`;
+if (card.status === 'Arrived' && card.eta) cardClass += ' in-the-air';
+if (card.status === 'Needs Service') cardClass += ' not-serviced-card';
+div.className = cardClass;
     div.dataset.id = card.id;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
