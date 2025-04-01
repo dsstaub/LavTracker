@@ -295,6 +295,34 @@
     z-index: 9999;
     display: none;
   }
+
+  .eta-bar {
+  width: 100%;
+  height: 10px;
+  margin-top: 8px;
+  background: transparent;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.eta-bar .progress {
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: black;
+  border-radius: 4px;
+  transition: width 0.5s linear;
+}
+
+.eta-bar .progress.green { background-color: #22cc88; }
+.eta-bar .progress.yellow { background-color: #ffd666; }
+.eta-bar .progress.pink { background-color: #ff66b2; }
+  
 </style>
 </head>
 <body class="dark">
@@ -422,13 +450,6 @@ function renderCards(highlightId = null) {
     document.getElementById(s).innerHTML = `<h3>${s} <span class="count" id="count-${s.replace(" ", "")}"></span></h3>`;
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === ' ' && document.activeElement.tagName !== 'INPUT') {
-      e.preventDefault();
-      document.getElementById('flight-number').focus();
-    }
-  });
-
   let needsServiceTotal = 0;
 
   cards.sort((a, b) => {
@@ -471,55 +492,9 @@ function renderCards(highlightId = null) {
     const handle = document.createElement('div');
     handle.className = 'drag-handle';
 
-    const timer = document.createElement('div');
-    timer.className = 'eta-timer';
-    timer.style.marginLeft = 'auto';
-    timer.style.fontWeight = 'bold';
-    timer.style.cursor = 'pointer';
-    timer.style.fontSize = '1.8rem';
-
-    if (card.status === 'Arrived') {
-      const update = () => {
-        if (!card.eta) return;
-        const diff = new Date(card.eta) - new Date();
-        timer.textContent = formatCountdown(diff);
-        timer.style.animation = Math.abs(diff) < 180000 ? 'flash-orange 1s infinite alternate' : '';
-      };
-
-      timer.onclick = () => {
-        const current = card.eta ? new Date(card.eta) : null;
-        const placeholder = current ? current.getHours().toString().padStart(2, '0') + ':' + current.getMinutes().toString().padStart(2, '0') : '';
-        const newEtaInput = prompt("Update ETA (HHMM or HH:MM):", placeholder);
-        const parts = parseETAInput(newEtaInput || '');
-        if (parts) {
-          const [h, m] = parts.map(Number);
-          const now = new Date();
-          const etaDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
-          if (etaDate < now) etaDate.setDate(etaDate.getDate() + 1);
-          card.eta = etaDate.toISOString();
-          saveCards();
-          renderCards();
-        } else {
-          alert("Invalid format. Use HHMM or HH:MM");
-        }
-      };
-
-      update();
-      setInterval(update, 60000);
-    }
-
-    handle.addEventListener('touchstart', (e) => {
-      e.stopPropagation();
-      div.dispatchEvent(new DragEvent("dragstart", { dataTransfer: new DataTransfer() }));
-    });
-
-    handle.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
-      div.dispatchEvent(new DragEvent("dragstart", { dataTransfer: new DataTransfer() }));
-    });
-
     div.appendChild(flightSpan);
     div.appendChild(tailField);
+
     if (card.status === 'Serviced' && card.servicedAt) {
       const timestamp = document.createElement('span');
       timestamp.textContent = card.servicedAt;
@@ -528,8 +503,46 @@ function renderCards(highlightId = null) {
       timestamp.style.margin = '0 4px';
       div.appendChild(timestamp);
     }
+
     div.appendChild(gateField);
-    if (card.status === 'Arrived') div.appendChild(timer);
+
+    if (card.status === 'Arrived' && card.eta) {
+      const now = new Date();
+      const eta = new Date(card.eta);
+      const diff = eta - now;
+      const total = 60 * 60 * 1000;
+      const remaining = Math.max(0, diff);
+      const percentage = Math.min(100, Math.round((remaining / total) * 100));
+
+      if (diff > 0) {
+        const barWrapper = document.createElement('div');
+        barWrapper.className = 'eta-bar';
+
+        const bar = document.createElement('div');
+        bar.className = 'progress';
+        bar.style.width = `${percentage}%`;
+
+        if (diff > 60 * 60 * 1000) {
+          bar.classList.add('green');
+        } else if (diff > 15 * 60 * 1000) {
+          bar.classList.add('yellow');
+        } else {
+          bar.classList.add('pink');
+        }
+
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+
+        const etaText = document.createElement('span');
+        etaText.className = 'eta-time';
+        etaText.textContent = `${h}:${m.toString().padStart(2, '0')}`;
+
+        bar.appendChild(etaText);
+        barWrapper.appendChild(bar);
+        div.appendChild(barWrapper);
+      }
+    }
+
     div.appendChild(handle);
 
     div.addEventListener('dragstart', e => {
@@ -571,7 +584,7 @@ function renderCards(highlightId = null) {
 
   bindDropZones();
 }
-
+  
   window.updateTail = (id, value) => {
     const c = cards.find(c => c.id === id);
     if (!c) return;
