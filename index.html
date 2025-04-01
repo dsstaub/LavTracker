@@ -296,11 +296,11 @@
     display: none;
   }
 
-.eta-bar {
+  .eta-bar {
   width: 100%;
   height: 10px;
   margin-top: 8px;
-  background: #444; /* fallback background if empty */
+  background: transparent;
   position: relative;
   border-radius: 4px;
   overflow: hidden;
@@ -317,7 +317,6 @@
   color: black;
   border-radius: 4px;
   transition: width 0.5s linear;
-  white-space: nowrap;
 }
 
 .eta-bar .progress.green { background-color: #22cc88; }
@@ -507,43 +506,43 @@ function renderCards(highlightId = null) {
 
     div.appendChild(gateField);
 
-if (card.status === 'Arrived' && card.eta) {
-card.eta = new Date().toISOString(); // Not null or blank
-  const eta = new Date(card.eta);
-  const diff = eta - now;
-  const total = 60 * 60 * 1000;
-  const remaining = Math.max(0, diff);
-  const percentage = Math.min(100, Math.round((remaining / total) * 100));
+    if (card.status === 'Arrived' && card.eta) {
+      const now = new Date();
+      const eta = new Date(card.eta);
+      const diff = eta - now;
+      const total = 60 * 60 * 1000;
+      const remaining = Math.max(0, diff);
+      const percentage = Math.min(100, Math.round((remaining / total) * 100));
 
-  const barWrapper = document.createElement('div');
-  barWrapper.className = 'eta-bar';
+      if (diff > 0) {
+        const barWrapper = document.createElement('div');
+        barWrapper.className = 'eta-bar';
 
-  if (diff > 0) {
-    const bar = document.createElement('div');
-    bar.className = 'progress';
-    bar.style.width = `${percentage}%`;
+        const bar = document.createElement('div');
+        bar.className = 'progress';
+        bar.style.width = `${percentage}%`;
 
-    if (diff > 60 * 60 * 1000) {
-      bar.classList.add('green');
-    } else if (diff > 15 * 60 * 1000) {
-      bar.classList.add('yellow');
-    } else {
-      bar.classList.add('pink');
+        if (diff > 60 * 60 * 1000) {
+          bar.classList.add('green');
+        } else if (diff > 15 * 60 * 1000) {
+          bar.classList.add('yellow');
+        } else {
+          bar.classList.add('pink');
+        }
+
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+
+        const etaText = document.createElement('span');
+        etaText.className = 'eta-time';
+        etaText.textContent = `${h}:${m.toString().padStart(2, '0')}`;
+
+        bar.appendChild(etaText);
+        barWrapper.appendChild(bar);
+        div.appendChild(barWrapper);
+      }
     }
 
-    const h = Math.floor(remaining / 3600000);
-    const m = Math.floor((remaining % 3600000) / 60000);
-
-    const etaText = document.createElement('span');
-    etaText.className = 'eta-time';
-    etaText.textContent = `${h}:${m.toString().padStart(2, '0')}`;
-
-    bar.appendChild(etaText);
-    barWrapper.appendChild(bar);
-    div.appendChild(barWrapper);
-  }
-}
-    
     div.appendChild(handle);
 
     div.addEventListener('dragstart', e => {
