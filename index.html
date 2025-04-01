@@ -553,12 +553,13 @@ function renderCards(highlightId = null) {
     div.addEventListener('dragend', () => div.classList.remove('dragging'));
 
     let sectionId = card.status;
-    if (sectionId === 'Arrived' && card.eta) {
-      sectionId = 'UpNext';
-    } else if (sectionId === 'Arrived' && !card.eta) {
-      sectionId = 'OnGround';
-    }
-
+if (sectionId === 'Arrived' && card.eta) {
+  sectionId = 'UpNext';
+} else if (sectionId === 'Arrived' && !card.eta) {
+  sectionId = 'OnGround';
+} else if (sectionId === 'UpNext') {
+  sectionId = 'UpNext';
+}
     const section = card.status === 'Needs Service'
       ? document.getElementById(card.serviceType || 'Needs Water')
       : document.getElementById(sectionId);
