@@ -402,7 +402,10 @@
   <div class="weather-modal" id="weather-modal" style="display: none;">
     <iframe src="https://wttr.in/KPIT?m" title="KPIT Weather"></iframe>
   </div>
-
+<div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
+<div class="weather-modal" id="weather-modal" style="display: none;">
+  <iframe src="https://wttr.in/KPIT?m" title="KPIT Weather"></iframe>
+</div>
 <script>
 window.onload = () => {
   const flightInput = document.getElementById('flight-number');
@@ -862,11 +865,5 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
-<div class="live-clock" id="live-clock">--ºF --:--:--</div>
-
-<div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
-<div class="weather-modal" id="weather-modal" style="display: none;">
-  <iframe src="https://wttr.in/KPIT?m" title="KPIT Weather"></iframe>
-</div>
 </body>
 </html>
