@@ -399,12 +399,23 @@
 
   <div class="live-clock" id="live-clock">--ºF --:--:--</div>
   <div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
-  <div class="weather-modal" id="weather-modal" style="display: none;">
-<div style="width:100%; height:300px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
-  <img src="https://wttr.in/KPIT.png?u" alt="KPIT Weather"
-       style="width:auto; height:auto; transform:scale(0.9); transform-origin:center center;" />
-</div>
+<div class="weather-modal" id="weather-modal">
+  <div style="
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+  ">
+    <img
+      src="https://wttr.in/KPIT.png?u"
+      alt="KPIT Weather"
+      style="width: auto; height: 100%; object-fit: contain; transform: scale(1.02); transform-origin: center center;"
+    />
   </div>
+</div>
 <div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
 <div class="weather-modal" id="weather-modal" style="display: none;">
 <iframe src="https://wttr.in/KPIT?u" title="KPIT Weather"></iframe>
