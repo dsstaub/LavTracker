@@ -520,7 +520,8 @@ div.className = cardClass;
 
 const flightSpan = document.createElement('span');
 flightSpan.className = 'flight-number';
-flightSpan.textContent = `AA ${card.flight.replace(/[^\d]/g, '')}`;
+flightSpan.innerHTML = `<span style="font-size:0.01rem; opacity:0.01">AA </span>${card.flight.replace(/[^\d]/g, '')}`;
+
     
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
