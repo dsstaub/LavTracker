@@ -518,7 +518,7 @@ div.className = cardClass;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
 
-const flightLink const flightLink = const flightLink = document.createElement('a');
+const flightLink = document.createElement('a');
 const flightNum = `AA${card.flight.replace(/[^\d]/g, '')}`;
 flightLink.className = 'flight-number';
 flightLink.textContent = flightNum;
@@ -528,7 +528,7 @@ flightLink.style.textDecoration = 'underline';
 flightLink.style.color = 'inherit';
 flightLink.style.cursor = 'pointer';
 flightLink.draggable = false;
-    
+
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
     tailField.value = card.tail;
