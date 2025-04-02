@@ -397,6 +397,9 @@
   <div class="footer-controls">
     <button onclick="downloadReport()">Export Report</button>
     <button onclick="clearAll()">Clear All Flights</button>
+    <div style="text-align:center; padding: 10px;">
+  <input type="file" id="csv-upload" accept=".csv" style="color:green;">
+</div>
   </div>
 
   <div class="live-clock" id="live-clock">--ºF --:--:--</div>
@@ -419,6 +422,62 @@
   </div>
 </div>
   <script>
+document.getElementById('csv-upload').addEventListener('change', async function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const text = await file.text();
+  const rows = text.split('\n').map(row => row.split(','));
+  const headers = rows[0].map(h => h.trim());
+  const dataRows = rows.slice(1);
+
+  const getCol = (label) => headers.findIndex(h => h.toLowerCase().includes(label.toLowerCase()));
+
+  const idxFlight = getCol('Arr. Flt');
+  const idxCarrier = getCol('Carrier');
+  const idxType = getCol('Arr. Type');
+  const idxETA = getCol('ETA/Actual');
+  const idxGate = getCol('ETA/Actual Gate');
+  const idxTail = getCol('Tail');
+  const idxEquip = getCol('Equip');
+
+  const filtered = dataRows
+    .map(row => {
+      const carrier = row[idxCarrier]?.trim();
+      const type = row[idxType]?.trim();
+      const etaStr = row[idxETA]?.trim();
+      const eta = etaStr ? new Date(etaStr) : null;
+      return {
+        flight: row[idxFlight]?.trim(),
+        tail: row[idxTail]?.trim(),
+        gate: row[idxGate]?.trim(),
+        eta,
+        equipment: row[idxEquip]?.trim(),
+        status: 'Scheduled',
+        serviceType: null
+      };
+    })
+    .filter(f =>
+      f.flight &&
+      f.tail &&
+      f.eta instanceof Date &&
+      !isNaN(f.eta) &&
+      f.eta.getHours() >= 15 &&
+      f.status === 'Scheduled'
+    );
+
+  for (const flightData of filtered) {
+    const exists = cards.find(c => c.flight === flightData.flight);
+    if (!exists) {
+      flightData.id = Date.now().toString() + Math.random(); // Ensure uniqueness
+      cards.push(flightData);
+    }
+  }
+
+  saveCards();
+  renderCards();
+});
+    
 window.onload = () => {
   const flightInput = document.getElementById('flight-number');
   const tailInput = document.getElementById('tail-number');
@@ -566,6 +625,24 @@ flightSpan.innerHTML = `<span style="font-size:0.01rem; opacity:0.01">AA</span>$
         timer.style.animation = Math.abs(diff) < 180000 ? 'flash-orange 1s infinite alternate' : '';
       };
 
+if (card.status === 'Scheduled' && card.eta) {
+  const etaDiv = document.createElement('div');
+  etaDiv.className = 'eta-timer';
+  etaDiv.style.marginLeft = 'auto';
+  etaDiv.style.fontWeight = 'bold';
+  etaDiv.style.fontSize = '1.8rem';
+
+  const update = () => {
+    const diff = new Date(card.eta) - new Date();
+    etaDiv.textContent = formatCountdown(diff);
+    etaDiv.style.animation = Math.abs(diff) < 180000 ? 'flash-orange 1s infinite alternate' : '';
+  };
+
+  update();
+  setInterval(update, 60000);
+  div.appendChild(etaDiv);
+}
+    
       timer.onclick = () => {
         const current = card.eta ? new Date(card.eta) : null;
         const placeholder = current ? current.getHours().toString().padStart(2, '0') + ':' + current.getMinutes().toString().padStart(2, '0') : '';
