@@ -321,8 +321,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 85vw;
-    height: 85vh;
+    width: 75vw;
+    height: 75vh;
     background: black;
     border: 2px solid white;
     z-index: 10000;
@@ -835,7 +835,7 @@ let currentTemp = '...';
 
 async function fetchTemperature() {
   try {
-    const res = await fetch('https://wttr.in/KPIT?format=%t');
+    const res = await fetch('https://wttr.in/KPIT?format=%t&u');
     const text = await res.text();
     currentTemp = text.trim();
   } catch (err) {
