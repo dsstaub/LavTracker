@@ -835,7 +835,11 @@ let currentTemp = '...';
 
 async function fetchTemperature() {
   try {
-    const res = await fetch('https://wttr.in/KPIT?format=%t&u');
+    const res = await fetch('https://wttr.in/KPIT?format=%t&u', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      }
+    });
     const text = await res.text();
     currentTemp = text.trim();
   } catch (err) {
