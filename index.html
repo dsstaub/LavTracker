@@ -520,7 +520,14 @@ div.className = cardClass;
 
     const flightSpan = document.createElement('span');
     flightSpan.className = 'flight-number';
-    flightSpan.textContent = card.flight;
+    flightSpan.flightSpan.textContent = card.flight; // Added to try to make flights clickable //
+    flightSpan.style.cursor = 'pointer';
+    flightSpan.style.textDecoration = 'underline';
+    flightSpan.onclick = () => {
+      const flightNumber = card.flight.replace(/[^\d]/g, '');
+      const url = `https://www.flightradar24.com/data/flights/aa${flightNumber}`;
+  window.open(url, '_blank');
+}; = card.flight;
 
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
