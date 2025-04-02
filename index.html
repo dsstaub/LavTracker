@@ -518,15 +518,16 @@ div.className = cardClass;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
 
-const flightLink = document.createElement('a');
+const flightLink = document.createElement('div');
 flightLink.className = 'flight-number';
-flightLink.textContent = `AA${card.flight.replace(/[^\d]/g, '')}`;
-flightLink.href = `flighty://flights/AA${card.flight.replace(/[^\d]/g, '')}`;
+flightLink.textContent = card.flight;
 flightLink.style.textDecoration = 'underline';
 flightLink.style.color = 'inherit';
 flightLink.style.cursor = 'pointer';
-flightLink.draggable = false;
-    
+flightLink.onclick = () => {
+  const numeric = card.flight.replace(/[^\d]/g, '');
+  window.location.href = `flighty://flights/AA${numeric}`;
+};    
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
     tailField.value = card.tail;
