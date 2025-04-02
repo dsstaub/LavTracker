@@ -427,8 +427,7 @@
   <script>
 window.onload = () => {
   const flightInput = document.getElementById('flight-number');
-  const tailInput = document.getElementById('tail-number');
-  const themeToggle = document.getElementById('theme-toggle');
+  const tailInput = document.getElementById('tail-number') || { value: '' };  const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
   let cards = [];
 
