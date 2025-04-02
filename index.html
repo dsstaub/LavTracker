@@ -336,7 +336,7 @@
     height: 100%;
     border: none;
     transform: scale(0.9);
-    transform-origin: center;
+    transform-origin: top left;
   }
 
   .weather-overlay {
@@ -400,8 +400,9 @@
   <div class="live-clock" id="live-clock">--ºF --:--:--</div>
   <div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
   <div class="weather-modal" id="weather-modal" style="display: none;">
-<div style="width:100%; height:400px; overflow:hidden;">
-  <img src="https://wttr.in/KPIT.png?u" alt="KPIT Weather" style="width:100%; height:100%; object-fit:cover;" />
+<div style="width:100%; height:300px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+  <img src="https://wttr.in/KPIT.png?u" alt="KPIT Weather"
+       style="width:auto; height:auto; transform:scale(0.9); transform-origin:center center;" />
 </div>
   </div>
 <div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
