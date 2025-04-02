@@ -316,17 +316,6 @@
     cursor: pointer;
   }
 
-.blinking {
-  visibility: visible;
-  animation: blink 1s steps(1, start) infinite;
-}
-
-@keyframes blink {
-  50% {
-    visibility: hidden;
-  }
-}
-  
   .weather-modal {
     position: fixed;
     top: 50%;
@@ -855,12 +844,9 @@ function updateClock() {
     ? `style="color: ${now.getSeconds() % 2 === 0 ? 'red' : 'white'}"`
     : '';
 
-  const colonStatic = ':'; // hh:mm colon is solid
-  const colonBlink = `<span class="blinking">:</span>`; // mm:ss colon blinks
-
   const clockHTML = `
     <span ${tempStyle}>${currentTemp}</span>
-    ${h}${colonStatic}${m}${colonBlink}${s}
+    ${h}:${m}:${s}
   `;
 
   document.getElementById('live-clock').innerHTML = clockHTML;
