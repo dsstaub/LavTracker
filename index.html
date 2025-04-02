@@ -693,19 +693,19 @@ if (column === 'Arrived') {
   } else if (targetId === 'Scheduled') {
     newStatus = 'Scheduled';
   }
-}        if (newStatus === 'Arrived' && card.status !== 'Arrived') {
-          const etaInput = prompt("Enter ETA (HHMM or HH:MM):");
-          const parts = parseETAInput(etaInput || '');
-          if (parts) {
-            const [h, m] = parts.map(Number);
-            const now = new Date();
-            const etaDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
-            if (etaDate < now) etaDate.setDate(etaDate.getDate() + 1);
-            card.eta = etaDate.toISOString();
-          } else {
-            alert("Invalid format. Use HHMM or HH:MM");
-          }
-        }
+}        if (targetId === 'UpNext' && card.status !== 'Arrived') {
+  const etaInput = prompt("Enter ETA (HHMM or HH:MM):");
+  const parts = parseETAInput(etaInput || '');
+  if (parts) {
+    const [h, m] = parts.map(Number);
+    const now = new Date();
+    const etaDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+    if (etaDate < now) etaDate.setDate(etaDate.getDate() + 1);
+    card.eta = etaDate.toISOString();
+  } else {
+    alert("Invalid format. Use HHMM or HH:MM");
+  }
+}
 
         card.status = newStatus;
         card.serviceType = isSub ? targetId : null;
