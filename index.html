@@ -589,7 +589,7 @@ flightSpan.innerHTML = `<span style="font-size:0.01rem; opacity:0.01">AA</span>$
       div.dispatchEvent(new DragEvent("dragstart", { dataTransfer: new DataTransfer() }));
     });
 
-    div.appendChild(flightLink);
+    div.appendChild(flightSpan);
     div.appendChild(tailField);
     if (card.status === 'Serviced' && card.servicedAt) {
       const timestamp = document.createElement('span');
