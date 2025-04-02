@@ -316,21 +316,34 @@
     cursor: pointer;
   }
 
+    .weather-modal {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75vw;
+    height: 55vh;
+    background: black;
+    border: 2px solid white;
+    z-index: 10000;
+    border-radius: 12px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .weather-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: none;
+  }
+
 .weather-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 75vw;
-  height: 55vh;
-  background: black;
-  border: 2px solid white;
-  border-radius: 12px;
-  overflow: hidden;
-  z-index: 10000;
-  transform: scale(0.95) translate(-50%, -50%);
   opacity: 0;
-  pointer-events: none;
+  transform: scale(0.95) translate(-50%, -50%);
   transition: opacity 250ms ease, transform 250ms ease;
+  pointer-events: none;
 }
 
 .weather-modal.show {
@@ -340,13 +353,9 @@
 }
 
 .weather-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
   opacity: 0;
-  pointer-events: none;
   transition: opacity 250ms ease;
+  pointer-events: none;
 }
 
 .weather-overlay.show {
@@ -361,7 +370,7 @@
 
   <div id="flight-form">
     <input id="flight-number" placeholder="Flight #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
-    <input id="tail-number" placeholder="Tail #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
+    <!-- <input id="tail-number" placeholder="Tail #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;"> -->
     <button id="add-btn">Add Flight</button>
   </div>
 
@@ -406,7 +415,7 @@
   </div>
 
   <div class="live-clock" id="live-clock">--ºF --:--:--</div>
-  <div class="weather-overlay" id="weather-overlay"></div>
+  <div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
 <div class="weather-modal" id="weather-modal">
 <div style="
   width: 100%;
@@ -427,7 +436,8 @@
   <script>
 window.onload = () => {
   const flightInput = document.getElementById('flight-number');
-  <!-- const tailInput = document.getElementById('tail-number') || { value: '' };  const themeToggle = document.getElementById('theme-toggle'); -->
+  const tailInput = document.getElementById('tail-number');
+  const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
   let cards = [];
 
@@ -892,16 +902,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlay = document.getElementById("weather-overlay");
 
   clock.addEventListener("click", () => {
-    modal.classList.add("show");
-    overlay.classList.add("show");
+    modal.style.display = "block";
+    overlay.style.display = "block";
   });
 
   overlay.addEventListener("click", () => {
-    modal.classList.remove("show");
-    overlay.classList.remove("show");
+    modal.style.display = "none";
+    overlay.style.display = "none";
   });
 });
-  
 </script>
 </body>
 </html>
