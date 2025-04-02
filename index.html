@@ -518,16 +518,16 @@ div.className = cardClass;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
 
-const flightLink = document.createElement('div');
+const flightLink = document.createElement('a');
 flightLink.className = 'flight-number';
 flightLink.textContent = card.flight;
+flightLink.href = `https://flightaware.com/live/flight/AA${card.flight.replace(/[^\d]/g, '')}`;
+flightLink.target = '_blank';
 flightLink.style.textDecoration = 'underline';
 flightLink.style.color = 'inherit';
 flightLink.style.cursor = 'pointer';
-flightLink.onclick = () => {
-  const numeric = card.flight.replace(/[^\d]/g, '');
-  window.location.href = `flighty://flights/AA${numeric}`;
-};    
+flightLink.draggable = false;
+    
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
     tailField.value = card.tail;
