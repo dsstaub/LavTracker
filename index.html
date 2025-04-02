@@ -518,7 +518,7 @@ div.className = cardClass;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
 
-const const flightLink = document.createElement('a');
+const flightLink = document.createElement('a');
 flightLink.className = 'flight-number';
 flightLink.textContent = card.flight;
 flightLink.href = `https://www.flightradar24.com/data/flights/aa${card.flight.replace(/[^\d]/g, '')}`;
@@ -528,6 +528,7 @@ flightLink.style.color = 'inherit';
 flightLink.style.cursor = 'pointer';
 flightLink.draggable = false;
 
+    
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
     tailField.value = card.tail;
