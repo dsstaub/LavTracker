@@ -339,11 +339,20 @@
     display: none;
   }
 
+  #logo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  height: 50px;
+  object-fit: contain;
+  z-index: 1001;
+  pointer-events: none;
+}
 </style>
 </head>
 <body class="dark">
   <button id="theme-toggle"></button>
-
+<img src="https://raw.githubusercontent.com/dsstaub/LavTracker/main/IMG_8497.png" alt="Logo" id="logo">
   <div id="flight-form">
     <input id="flight-number" placeholder="Flight #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
     <input id="tail-number" placeholder="Tail #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
