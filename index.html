@@ -526,17 +526,8 @@ flightLink.target = '_blank';
 flightLink.style.textDecoration = 'underline';
 flightLink.style.color = 'inherit';
 flightLink.style.cursor = 'pointer';
-flightLink.draggable = false; // Important: don't let the link be draggableflightSpan.style.cursor = 'pointer';
-flightSpan.style.textDecoration = 'underline';
-flightSpan.addEventListener('click', (e) => {
-  e.stopPropagation(); // So it doesn't interfere with drag
-  const flightNumOnly = card.flight.replace(/[^\d]/g, '');
-  if (flightNumOnly) {
-    const url = `https://www.flightradar24.com/data/flights/aa${flightNumOnly}`;
-    window.open(url, '_blank');
-  }
-});
-
+flightLink.draggable = false
+    
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
     tailField.value = card.tail;
