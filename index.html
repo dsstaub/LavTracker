@@ -520,14 +520,12 @@ div.className = cardClass;
 
 const flightLink = document.createElement('a');
 flightLink.className = 'flight-number';
-flightLink.textContent = card.flight;
-flightLink.href = `https://www.flightradar24.com/data/flights/aa${card.flight.replace(/[^\d]/g, '')}`;
-flightLink.target = '_blank';
+flightLink.textContent = `AA${card.flight.replace(/[^\d]/g, '')}`;
+flightLink.href = `flighty://flights/AA${card.flight.replace(/[^\d]/g, '')}`;
 flightLink.style.textDecoration = 'underline';
 flightLink.style.color = 'inherit';
 flightLink.style.cursor = 'pointer';
 flightLink.draggable = false;
-
     
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
