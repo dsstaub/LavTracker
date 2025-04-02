@@ -518,11 +518,10 @@ div.className = cardClass;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
 
-const flightLink = document.createElement('a');
-const flightNum = `AA${card.flight.replace(/[^\d]/g, '')}`;
+const const flightLink = document.createElement('a');
 flightLink.className = 'flight-number';
-flightLink.textContent = flightNum;
-flightLink.href = `https://flightaware.com/live/flight/${flightNum}`;
+flightLink.textContent = card.flight;
+flightLink.href = `https://www.flightradar24.com/data/flights/aa${card.flight.replace(/[^\d]/g, '')}`;
 flightLink.target = '_blank';
 flightLink.style.textDecoration = 'underline';
 flightLink.style.color = 'inherit';
