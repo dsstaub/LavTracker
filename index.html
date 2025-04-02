@@ -518,10 +518,15 @@ div.className = cardClass;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
 
-    const flightSpan = document.const flightSpan = document.createElement('span');
-flightSpan.className = 'flight-number';
-flightSpan.textContent = card.flight;
-flightSpan.style.cursor = 'pointer';
+const flightLink = document.createElement('a');
+flightLink.className = 'flight-number';
+flightLink.textContent = card.flight;
+flightLink.href = `https://www.flightradar24.com/data/flights/aa${card.flight.replace(/[^\d]/g, '')}`;
+flightLink.target = '_blank';
+flightLink.style.textDecoration = 'underline';
+flightLink.style.color = 'inherit';
+flightLink.style.cursor = 'pointer';
+flightLink.draggable = false; // Important: don't let the link be draggableflightSpan.style.cursor = 'pointer';
 flightSpan.style.textDecoration = 'underline';
 flightSpan.addEventListener('click', (e) => {
   e.stopPropagation(); // So it doesn't interfere with drag
@@ -598,7 +603,7 @@ flightSpan.addEventListener('click', (e) => {
       div.dispatchEvent(new DragEvent("dragstart", { dataTransfer: new DataTransfer() }));
     });
 
-    div.appendChild(flightSpan);
+    div.appendChild(flightLink);
     div.appendChild(tailField);
     if (card.status === 'Serviced' && card.servicedAt) {
       const timestamp = document.createElement('span');
