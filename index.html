@@ -518,15 +518,9 @@ div.className = cardClass;
     div.draggable = true;
     if (card.id === highlightId) div.classList.add('highlighted');
 
-const flightLink = document.createElement('a');
-flightLink.className = 'flight-number';
-flightLink.textContent = card.flight;
-flightLink.href = `https://flights.apple.com/flights/AA${card.flight.replace(/[^\d]/g, '')}`;
-flightLink.target = '_blank';
-flightLink.style.textDecoration = 'underline';
-flightLink.style.color = 'inherit';
-flightLink.style.cursor = 'pointer';
-flightLink.draggable = false;
+const flightSpan = document.createElement('span');
+flightSpan.className = 'flight-number';
+flightSpan.textContent = `AA ${card.flight.replace(/[^\d]/g, '')}`;
     
     const tailField = document.createElement('input');
     tailField.className = 'tail-input';
