@@ -361,7 +361,7 @@
 
   <div id="flight-form">
     <input id="flight-number" placeholder="Flight #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
-    <!-- <input id="tail-number" placeholder="Tail #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;"> -->
+    <input id="tail-number" placeholder="Tail #" style="background-color: transparent; color: white; border: 1px solid #2c2c2c; outline: none;">
     <button id="add-btn">Add Flight</button>
   </div>
 
@@ -427,7 +427,7 @@
   <script>
 window.onload = () => {
   const flightInput = document.getElementById('flight-number');
-  const tailInput = document.getElementById('tail-number') || { value: '' };  const themeToggle = document.getElementById('theme-toggle');
+  <!-- const tailInput = document.getElementById('tail-number') || { value: '' };  const themeToggle = document.getElementById('theme-toggle'); -->
   const body = document.body;
   let cards = [];
 
