@@ -316,34 +316,21 @@
     cursor: pointer;
   }
 
-    .weather-modal {
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75vw;
-    height: 55vh;
-    background: black;
-    border: 2px solid white;
-    z-index: 10000;
-    border-radius: 12px;
-    overflow: hidden;
-    display: none;
-  }
-
-  .weather-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 9999;
-    display: none;
-  }
-
 .weather-modal {
-  opacity: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 75vw;
+  height: 55vh;
+  background: black;
+  border: 2px solid white;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 10000;
   transform: scale(0.95) translate(-50%, -50%);
-  transition: opacity 250ms ease, transform 250ms ease;
+  opacity: 0;
   pointer-events: none;
+  transition: opacity 250ms ease, transform 250ms ease;
 }
 
 .weather-modal.show {
@@ -353,9 +340,13 @@
 }
 
 .weather-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
   opacity: 0;
-  transition: opacity 250ms ease;
   pointer-events: none;
+  transition: opacity 250ms ease;
 }
 
 .weather-overlay.show {
@@ -415,7 +406,7 @@
   </div>
 
   <div class="live-clock" id="live-clock">--ºF --:--:--</div>
-  <div class="weather-overlay" id="weather-overlay" style="display: none;"></div>
+  <div class="weather-overlay" id="weather-overlay"></div>
 <div class="weather-modal" id="weather-modal">
 <div style="
   width: 100%;
@@ -902,15 +893,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlay = document.getElementById("weather-overlay");
 
   clock.addEventListener("click", () => {
-    modal.style.display = "block";
-    overlay.style.display = "block";
+    modal.classList.add("show");
+    overlay.classList.add("show");
   });
 
   overlay.addEventListener("click", () => {
-    modal.style.display = "none";
-    overlay.style.display = "none";
+    modal.classList.remove("show");
+    overlay.classList.remove("show");
   });
 });
+  
 </script>
 </body>
 </html>
