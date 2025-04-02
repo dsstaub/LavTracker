@@ -495,6 +495,16 @@ function renderCards(highlightId = null) {
     return 0;
   });
 
+  document.addEventListener('click', (e) => {
+  const isInput = e.target.tagName === 'INPUT' || e.target.closest('input');
+  if (!isInput) {
+    const active = document.activeElement;
+    if (active && active.tagName === 'INPUT') {
+      active.blur();
+    }
+  }
+});
+
   cards.forEach(card => {
     const div = document.createElement('div');
     let cardClass = `card ${getFlightClass(card.flight)}`;
