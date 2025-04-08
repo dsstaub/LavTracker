@@ -172,3 +172,50 @@ input.edit-field {
   font-size: 32px;
   width: 100px;
 }
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: auto;
+    padding: 10px 0;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  #logo {
+    height: 40px;
+    margin-bottom: 5px;
+  }
+
+  .live-clock,
+  .weather-modal,
+  .weather-overlay {
+    display: none !important;
+  }
+
+  .sortable-wrapper {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .flight-card {
+    width: 95vw;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .hour-block {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 5px;
+  }
+
+  .hour-label {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+}
