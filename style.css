@@ -114,6 +114,9 @@ header {
   font-weight: bold;
   color: #fff;
   text-shadow: 1px 1px 3px #000;
+  background-clip: padding-box;
+  border-left-width: 10px;
+  box-shadow: inset 10px 0 0 0 transparent, 2px 0 0 0 #111; /* the gap */
 }
 
 .flight-info {
