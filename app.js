@@ -1,118 +1,168 @@
-document.getElementById('uploadBtn').addEventListener('click', () => {
-  const fileInput = document.getElementById('csvInput');
-  const isRefreshMode = document.getElementById('refreshToggle').checked;
-
-  if (fileInput.files.length === 0) {
-    alert("Please select a CSV file.");
-    return;
+let currentTemp = '...';
+async function fetchTemperature() {
+  try {
+    const res = await fetch('https://wttr.in/KPIT?format=%t&u');
+    const text = await res.text();
+    currentTemp = text.trim();
+  } catch {
+    currentTemp = '??ºF';
   }
+}
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2, '0');
+  const m = now.getMinutes().toString().padStart(2, '0');
+  const s = now.getSeconds().toString().padStart(2, '0');
+  document.getElementById('live-clock').innerHTML = `${currentTemp} ${h}:${m}:${s}`;
+}
+setInterval(updateClock, 1000);
+setInterval(fetchTemperature, 300000);
+fetchTemperature();
+updateClock();
 
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    Papa.parse(e.target.result, {
-      header: false,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const rows = results.data;
+document.addEventListener("DOMContentLoaded", () => {
+  const clock = document.getElementById("live-clock");
+  const modal = document.getElementById("weather-modal");
+  const overlay = document.getElementById("weather-overlay");
 
-        if (!isRefreshMode) {
-          document.getElementById('hourGrid').innerHTML = '';
-        }
-
-        rows.forEach(row => {
-          const flightNum = row[0]?.trim();
-          const carrier = row[1]?.trim();
-          const eta = row[8]?.trim();
-          const arrType = row[11]?.trim();
-          const gate = row[13]?.trim();
-          const tail = row[26]?.trim();
-          const acType = row[27]?.trim();
-
-          if (!flightNum || !arrType || carrier !== 'AA') return;
-
-          const existingCard = document.querySelector(`.flight-card[data-flight="${flightNum}"]`);
-
-          if (existingCard && isRefreshMode) {
-            const oldEta = existingCard.getAttribute('data-eta');
-
-            existingCard.querySelector('.gate').textContent = gate;
-            existingCard.querySelector('.tail').textContent = tail;
-            existingCard.querySelector('.ac-type').textContent = acType;
-            existingCard.querySelector('.eta').textContent = eta;
-            existingCard.setAttribute('data-eta', eta);
-
-            if (oldEta !== eta) {
-              moveCardToNewHourBlock(existingCard, eta);
-            }
-
-          } else if (!existingCard || !isRefreshMode) {
-            createFlightCard({ flightNum, arrType, eta, gate, tail, acType });
-          }
-        });
-      }
-    });
-  };
-
-  reader.readAsText(fileInput.files[0]);
-});
-
-function createFlightCard({ flightNum, arrType, eta, gate, tail, acType }) {
-  const hour = parseInt(eta.split(':')[0], 10);
-  let hourRow = document.querySelector(`#hourGrid .hour-row[data-hour="${hour}"]`);
-
-  if (!hourRow) {
-    hourRow = document.createElement('div');
-    hourRow.classList.add('hour-row');
-    hourRow.dataset.hour = hour;
-    hourRow.innerHTML = `
-      <div class="hour-label">${hour}</div>
-      <div class="card-wrapper"></div>
-    `;
-    document.getElementById('hourGrid').appendChild(hourRow);
-  }
-
-  const wrapper = hourRow.querySelector('.card-wrapper');
-
-  const card = document.createElement('div');
-  card.classList.add('flight-card');
-  card.setAttribute('data-flight', flightNum);
-  card.setAttribute('data-eta', eta);
-
-  card.innerHTML = `
-    <div class="top-row">
-      <div class="flight-num">${flightNum}</div>
-      <div class="gate">${gate}</div>
-    </div>
-    <div class="bottom-row">
-      <div class="tail">${tail}</div>
-      <div class="ac-type">${acType}</div>
-      <div class="eta">${eta}</div>
-    </div>
-  `;
-
-  card.addEventListener('dblclick', () => {
-    card.classList.toggle('dimmed');
+  clock.addEventListener("click", () => {
+    modal.style.display = "block";
+    overlay.style.display = "block";
   });
 
-  wrapper.appendChild(card);
+  overlay.addEventListener("click", () => {
+    modal.style.display = "none";
+    overlay.style.display = "none";
+  });
+});
+
+const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 1];
+const grid = document.getElementById("hourGrid");
+
+function createHourBlocks() {
+  grid.innerHTML = "";
+  hours.forEach(hour => {
+    const block = document.createElement("div");
+    block.className = "hour-block";
+
+    const label = document.createElement("div");
+    label.className = "hour-label";
+    label.textContent = hour;
+
+    const dropZone = document.createElement("div");
+    dropZone.id = `hour-${hour}`;
+    dropZone.className = "sortable-wrapper";
+
+    block.appendChild(label);
+    block.appendChild(dropZone);
+    grid.appendChild(block);
+
+    new Sortable(dropZone, {
+      group: 'shared',
+      animation: 150,
+      direction: 'horizontal',
+    });
+  });
 }
 
-function moveCardToNewHourBlock(card, newEta) {
-  const newHour = parseInt(newEta.split(':')[0], 10);
-  card.setAttribute('data-eta', newEta);
-
-  let newHourRow = document.querySelector(`#hourGrid .hour-row[data-hour="${newHour}"]`);
-  if (!newHourRow) {
-    newHourRow = document.createElement('div');
-    newHourRow.classList.add('hour-row');
-    newHourRow.dataset.hour = newHour;
-    newHourRow.innerHTML = `
-      <div class="hour-label">${newHour}</div>
-      <div class="card-wrapper"></div>
-    `;
-    document.getElementById('hourGrid').appendChild(newHourRow);
-  }
-
-  const newWrapper = newHourRow.querySelector('.card-wrapper');
-  newWrapper.appendChild(card);
+function makeEditable(el, field, flight) {
+  const input = document.createElement("input");
+  input.value = flight[field];
+  input.className = "edit-field";
+  input.onblur = () => {
+    flight[field] = input.value;
+    el.innerText = input.value || '[ ]';
+    el.style.display = "inline-block";
+    input.remove();
+  };
+  el.style.display = "none";
+  el.parentNode.insertBefore(input, el);
+  input.focus();
 }
+
+function attachLongPress(card) {
+  let pressTimer, wasDragging = false;
+  card.addEventListener("pointerdown", () => {
+    wasDragging = false;
+    pressTimer = setTimeout(() => {
+      if (!wasDragging) card.classList.toggle("dimmed");
+    }, 500);
+  });
+  card.addEventListener("pointerup", () => clearTimeout(pressTimer));
+  card.addEventListener("pointerleave", () => clearTimeout(pressTimer));
+  card.addEventListener("pointermove", () => { wasDragging = true; });
+}
+
+document.getElementById("csvUpload").addEventListener("change", function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: h => h.trim(),
+    complete: function (results) {
+      const flights = results.data.filter(f =>
+        (f["Carrier"] || "").trim() === "AA" ||
+        (f["Arr. Type"] || "").toUpperCase().includes("TERM")
+      ).map(f => {
+        const values = Object.values(f);
+        return {
+          flight: values[2]?.trim() || "",
+          eta: values[8]?.trim() || "",
+          gate: values[13]?.trim() || "",
+          tail: values[26]?.trim() || "",
+          type: values[27]?.trim() || "",
+          arrType: values[11]?.trim() || "",
+          carrier: values[1]?.trim() || ""
+        };
+      });
+
+      createHourBlocks();
+
+      flights.forEach(f => {
+        const labelClass = f.arrType.toUpperCase() === "TERM" ? "tf" : "qt";
+        const carrierClass = f.carrier === "AA" ? "mainline" : "regional";
+        let hourMatch = f.eta.match(/^(\d{1,2})/);
+        let hour = hourMatch ? parseInt(hourMatch[1], 10) : null;
+        if (hour === 0) hour = 24;
+
+        const card = document.createElement("div");
+        card.className = `flight-card ${labelClass} ${carrierClass}`;
+
+        const gateSpan = document.createElement("span");
+        gateSpan.innerText = f.gate || '[ ]';
+        gateSpan.className = "editable";
+        gateSpan.onclick = () => makeEditable(gateSpan, 'gate', f);
+
+        const tailSpan = document.createElement("span");
+        tailSpan.innerText = f.tail || '[ ]';
+        tailSpan.className = "editable";
+        tailSpan.onclick = () => makeEditable(tailSpan, 'tail', f);
+
+        card.innerHTML = `
+          <div class="flight-info">
+            <span>${f.flight} (${f.type})</span>
+          </div>
+          <div class="flight-meta">
+            <span>ETA: ${f.eta}</span>
+          </div>
+        `;
+
+        const infoRow = card.querySelector(".flight-info");
+        infoRow.appendChild(gateSpan);
+        const meta = card.querySelector(".flight-meta");
+        const editBox = document.createElement("div");
+        editBox.style.display = "flex";
+        editBox.style.gap = "10px";
+        editBox.appendChild(tailSpan);
+        meta.appendChild(editBox);
+
+        attachLongPress(card);
+
+        const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
+        target.appendChild(card);
+      });
+    }
+  });
+});
