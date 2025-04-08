@@ -187,7 +187,7 @@ input.edit-field {
   }
 
   #logo {
-    height: 40px;
+    height: 60px;
     margin-bottom: 5px;
   }
 
@@ -203,8 +203,8 @@ input.edit-field {
   }
 
   .flight-card {
-    width: 95vw;
-    max-width: 480px;
+    width: 985vw;
+    max-width: 460px;
     margin: 0 auto;
   }
 
