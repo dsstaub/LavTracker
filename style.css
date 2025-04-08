@@ -91,25 +91,40 @@ header {
   display: flex;
   background: #1a1a1a;
   overflow: hidden;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
   transition: opacity 0.3s, filter 0.3s;
-  font-size: 1.25rem;
-  font-weight: bold;
 }
 
-.flight-card .color-bar {
+.color-bar {
   width: 10px;
   flex-shrink: 0;
-  background-color: gray;
-  border-right: 2px solid #000; /* Separation bar */
 }
 
-.flight-card .card-content {
+.color-bar.tf {
+  background-color: red;
+}
+
+.color-bar.qt {
+  background-color: limegreen;
+}
+
+.card-content {
   flex: 1;
-  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 10px 12px;
+  position: relative;
+}
+
+.card-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -2px;
+  width: 2px;
+  height: 100%;
+  background: #000;
 }
 
 .flight-card.dimmed {
@@ -121,7 +136,9 @@ header {
 .flight-meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  line-height: 1.4;
 }
 
 .editable {
@@ -137,22 +154,6 @@ input.edit-field {
   background: #000;
   color: #fff;
   border: 1px solid #444;
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   width: 100px;
-}
-
-.mainline {
-  background: #3399ff;
-}
-
-.regional {
-  background: #ff6666;
-}
-
-.tf {
-  background-color: red !important;
-}
-
-.qt {
-  background-color: limegreen !important;
 }
