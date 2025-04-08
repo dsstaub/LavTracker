@@ -1,14 +1,13 @@
 body {
   background: #111;
   color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: sans-serif;
   margin: 0;
 }
 
 header {
   background: #222;
   height: 80px;
-  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27,16 +26,15 @@ header {
 .live-clock {
   background: #000;
   color: white;
-  font-size: 2.4rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border-radius: 999px;
   font-family: monospace;
-  letter-spacing: 0.07em;
-  min-width: 18ch;
+  letter-spacing: 0.05em;
+  min-width: 16ch;
   text-align: center;
   cursor: pointer;
-  z-index: 1001;
 }
 
 .weather-modal {
@@ -60,6 +58,23 @@ header {
   background: rgba(0, 0, 0, 0.6);
   z-index: 9999;
   display: none;
+}
+
+.weather-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+}
+
+.weather-content img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform: scale(1.2) translateX(110px);
+  transform-origin: center center;
 }
 
 .hour-block {
@@ -89,70 +104,37 @@ header {
 .flight-card {
   width: 280px;
   border-radius: 8px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-left: 10px solid;
-  line-height: 1.2em;
+  font-size: 32px;
+  line-height: 1.3em;
   display: flex;
   flex-direction: column;
   transition: opacity 0.3s, filter 0.3s;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 1px 1px 3px #000;
-  background: #1a1a1a;
-  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.9);
-  position: relative;
-}
-
-.flight-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 10px;
-  width: 2px;
-  height: 100%;
-  background: #000;
-  z-index: 1;
 }
 
 .flight-card.dimmed {
-  opacity: 0.4;
-  filter: grayscale(100%);
+  opacity: 0.5;
+  filter: grayscale(80%);
 }
 
-.flight-info,
+.flight-info {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
 .flight-meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-family: monospace;
-  font-size: 36px;
-  letter-spacing: 1px;
-  font-weight: 900;
-  color: #fff;
-  text-shadow: 2px 2px 4px #000;
+  margin-top: 4px;
 }
 
-.flight-info span,
-.flight-meta span,
 .editable {
-  font-size: 36px;
-  font-family: monospace;
-  font-weight: 900;
-  text-shadow: 2px 2px 4px #000;
-  color: #fffcb2;
-  display: inline-block;
   cursor: pointer;
   min-width: 50px;
-  text-align: right;
-}
-
-input.edit-field {
-  background: #000;
-  color: #fff;
-  border: 1px solid #444;
-  font-size: 34px;
-  width: 100px;
-  font-family: monospace;
+  display: inline-block;
+  color: #ddd;
 }
 
 .mainline {
@@ -169,4 +151,12 @@ input.edit-field {
 
 .qt {
   border-left-color: limegreen;
+}
+
+input.edit-field {
+  background: #000;
+  color: #fff;
+  border: 1px solid #444;
+  font-size: 32px;
+  width: 100px;
 }
