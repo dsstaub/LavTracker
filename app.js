@@ -130,7 +130,18 @@ document.getElementById("csvUpload").addEventListener("change", function (e) {
         if (hour === 0) hour = 24;
 
         const card = document.createElement("div");
-        card.className = `flight-card ${labelClass} ${carrierClass}`;
+        card.className = `flight-card ${carrierClass}`;
+card.innerHTML = `
+  <div class="color-bar ${labelClass}"></div>
+  <div class="card-content">
+    <div class="flight-info">
+      <span>${f.flight} (${f.type})</span>
+    </div>
+    <div class="flight-meta">
+      <span>ETA: ${f.eta}</span>
+    </div>
+  </div>
+`;
 
         const gateSpan = document.createElement("span");
         gateSpan.innerText = f.gate || '[ ]';
