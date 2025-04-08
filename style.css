@@ -120,7 +120,7 @@ header {
   display: flex;
   justify-content: space-between;
   font-family: monospace;
-  font-size: 34px;
+  font-size: 38px;
   letter-spacing: 1px;
   font-weight: 700;
   color: #fff;
@@ -132,7 +132,7 @@ header {
   justify-content: space-between;
   margin-top: 4px;
   font-family: monospace;
-  font-size: 30px;
+  font-size: 34px;
   color: #fff;
   text-shadow: 1px 1px 3px #000;
 }
