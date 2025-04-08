@@ -11,6 +11,13 @@
 <body>
   <header>
     <img src="https://raw.githubusercontent.com/dsstaub/LavTracker/main/sd-logo3.png" alt="Logo" id="logo">
+    <label id="refreshToggleLabel">
+  <input type="checkbox" id="refreshToggle" />
+  Refresh Mode
+</label>
+<button id="uploadBtn">Upload</button>
+<input type="file" id="csvInput" accept=".csv" />
+<div id="flightBoard"></div>
     <input type="file" id="csvUpload" accept=".csv" />
     <div class="live-clock" id="live-clock">--ºF --:--:--</div>
   </header>
