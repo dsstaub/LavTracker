@@ -104,30 +104,42 @@ header {
 .flight-card {
   width: 280px;
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-left: 10px solid;
   font-size: 32px;
-  line-height: 1.3em;
+  line-height: 1.2em;
   display: flex;
   flex-direction: column;
   transition: opacity 0.3s, filter 0.3s;
-}
-
-.flight-card.dimmed {
-  opacity: 0.5;
-  filter: grayscale(80%);
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
 }
 
 .flight-info {
   display: flex;
   justify-content: space-between;
-  font-weight: bold;
+  font-family: monospace;
+  font-size: 34px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000;
 }
 
 .flight-meta {
   display: flex;
   justify-content: space-between;
   margin-top: 4px;
+  font-family: monospace;
+  font-size: 30px;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.flight-card.dimmed {
+  opacity: 0.5;
+  filter: grayscale(80%);
 }
 
 .editable {
