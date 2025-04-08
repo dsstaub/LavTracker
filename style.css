@@ -1,5 +1,6 @@
 body {
-  background: url('images/Logo-Swirl-LG-BG.png') repeat;
+  background-image: url('images/Logo-Swirl-LG-BG.png');
+  background-repeat: repeat;
   background-color: #111; /* fallback color */
   color: #fff;
   font-family: sans-serif;
