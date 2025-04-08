@@ -1,7 +1,7 @@
 body {
   background: #111;
   color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: sans-serif;
   margin: 0;
 }
 
@@ -89,44 +89,26 @@ header {
 .flight-card {
   width: 280px;
   border-radius: 8px;
-  display: flex;
-  background: #1a1a1a;
-  overflow: hidden;
-  box-shadow: 3px 3px 8px rgba(0,0,0,0.75);
-  transition: opacity 0.3s, filter 0.3s;
-}
-
-.color-bar {
-  width: 10px;
-  flex-shrink: 0;
-}
-
-.color-bar.tf {
-  background-color: red;
-}
-
-.color-bar.qt {
-  background-color: limegreen;
-}
-
-.card-content {
-  flex: 1;
+  padding: 6px 10px;
+  border-left: 10px solid;
+  font-size: 32px;
+  line-height: 1.2em;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 10px 12px;
+  transition: opacity 0.3s, filter 0.3s;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
+  background: #1a1a1a;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.75);
   position: relative;
-  font-size: 1.6rem;
-  font-weight: 800;
-  line-height: 1.4;
-  letter-spacing: 0.02em;
 }
 
-.card-content::before {
+.flight-card::before {
   content: "";
   position: absolute;
   top: 0;
-  left: -2px;
+  left: 10px;
   width: 2px;
   height: 100%;
   background: #000;
@@ -137,11 +119,25 @@ header {
   filter: grayscale(100%);
 }
 
-.flight-info,
+.flight-info {
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 34px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000;
+}
+
 .flight-meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  margin-top: 4px;
+  font-family: monospace;
+  font-size: 30px;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
 }
 
 .editable {
@@ -151,12 +147,32 @@ header {
   color: #fffcb2;
   font-weight: bold;
   text-align: right;
+  font-family: monospace;
+  font-size: 30px;
+  text-shadow: 1px 1px 3px #000;
 }
 
 input.edit-field {
   background: #000;
   color: #fff;
   border: 1px solid #444;
-  font-size: 1.6rem;
+  font-size: 30px;
   width: 100px;
+  font-family: monospace;
+}
+
+.mainline {
+  background: #3399ff;
+}
+
+.regional {
+  background: #ff6666;
+}
+
+.tf {
+  border-left-color: red;
+}
+
+.qt {
+  border-left-color: limegreen;
 }
