@@ -13,31 +13,26 @@
     }
     header {
       background: #222;
-      padding: 60px 10px 10px;
+      height: 80px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       position: relative;
       z-index: 100;
     }
     #logo {
-      position: absolute;
-      top: 10px;
-      left: 10px;
       height: 40px;
       object-fit: contain;
-      z-index: 101;
       pointer-events: none;
     }
     .live-clock {
-      position: absolute;
-      top: 10px;
-      right: 10px;
       background: #000;
       color: white;
       font-size: 1.4rem;
       font-weight: bold;
       padding: 8px 14px;
       border-radius: 999px;
-      z-index: 101;
-      pointer-events: auto;
       font-family: monospace;
       letter-spacing: 0.05em;
       min-width: 16ch;
@@ -143,8 +138,8 @@
 <body>
   <header>
     <img src="https://raw.githubusercontent.com/dsstaub/LavTracker/main/Image%2071.jpeg" alt="Logo" id="logo">
-    <div class="live-clock" id="live-clock">--ºF --:--:--</div>
     <input type="file" id="csvUpload" accept=".csv" />
+    <div class="live-clock" id="live-clock">--ºF --:--:--</div>
   </header>
   <div class="weather-overlay" id="weather-overlay"></div>
   <div class="weather-modal" id="weather-modal">
