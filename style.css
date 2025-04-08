@@ -1,7 +1,7 @@
 body {
   background: #111;
   color: #fff;
-  font-family: sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
 }
 
@@ -27,7 +27,7 @@ header {
 .live-clock {
   background: #000;
   color: white;
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: bold;
   padding: 10px 16px;
   border-radius: 999px;
@@ -91,7 +91,6 @@ header {
   border-radius: 8px;
   padding: 6px 10px;
   border-left: 10px solid;
-  font-size: 32px;
   line-height: 1.2em;
   display: flex;
   flex-direction: column;
@@ -100,7 +99,7 @@ header {
   color: #fff;
   text-shadow: 1px 1px 3px #000;
   background: #1a1a1a;
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.9);
   position: relative;
 }
 
@@ -112,6 +111,7 @@ header {
   width: 2px;
   height: 100%;
   background: #000;
+  z-index: 1;
 }
 
 .flight-card.dimmed {
@@ -119,44 +119,38 @@ header {
   filter: grayscale(100%);
 }
 
-.flight-info {
+.flight-info,
+.flight-meta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-family: monospace;
-  font-size: 34px;
+  font-size: 36px;
   letter-spacing: 1px;
-  font-weight: 700;
+  font-weight: 900;
   color: #fff;
   text-shadow: 2px 2px 4px #000;
 }
 
-.flight-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 4px;
-  font-family: monospace;
-  font-size: 30px;
-  color: #fff;
-  text-shadow: 1px 1px 3px #000;
-}
-
+.flight-info span,
+.flight-meta span,
 .editable {
+  font-size: 36px;
+  font-family: monospace;
+  font-weight: 900;
+  text-shadow: 2px 2px 4px #000;
+  color: #fffcb2;
+  display: inline-block;
   cursor: pointer;
   min-width: 50px;
-  display: inline-block;
-  color: #fffcb2;
-  font-weight: bold;
   text-align: right;
-  font-family: monospace;
-  font-size: 30px;
-  text-shadow: 1px 1px 3px #000;
 }
 
 input.edit-field {
   background: #000;
   color: #fff;
   border: 1px solid #444;
-  font-size: 30px;
+  font-size: 34px;
   width: 100px;
   font-family: monospace;
 }
@@ -175,14 +169,4 @@ input.edit-field {
 
 .qt {
   border-left-color: limegreen;
-}
-
-.flight-info span,
-.flight-meta span {
-  font-family: monospace;
-  font-size: 34px;
-  letter-spacing: 1px;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 2px 2px 4px #000;
 }
