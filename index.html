@@ -4,188 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flight Checklist Board</title>
-  <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: sans-serif;
-      margin: 0;
-    }
-    header {
-      background: #222;
-      height: 80px;
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      border-bottom: 2px solid lime;
-      position: relative;
-      z-index: 1000;
-    }
-    #logo {
-      height: 50px;
-      object-fit: contain;
-      pointer-events: none;
-      background: red;
-      border: 2px solid yellow;
-    }
-    .live-clock {
-      background: #000;
-      color: lime;
-      font-size: 2rem;
-      font-weight: bold;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-family: monospace;
-      border: 2px solid cyan;
-    }
-    .hour-block {
-      display: flex;
-      align-items: flex-start;
-      border-bottom: 1px solid #333;
-      padding: 10px;
-    }
-    .hour-label {
-      width: 60px;
-      font-size: 48px;
-      font-weight: bold;
-      color: #ccc;
-      text-align: center;
-      flex-shrink: 0;
-      user-select: none;
-    }
-    .sortable-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      flex: 1;
-    }
-    .flight-card {
-      width: 280px;
-      border-radius: 8px;
-      padding: 8px 12px;
-      border-left: 10px solid;
-      font-size: 32px;
-      line-height: 1.3em;
-      display: flex;
-      flex-direction: column;
-      transition: opacity 0.3s, filter 0.3s;
-    }
-    .flight-card.dimmed {
-      opacity: 0.5;
-      filter: grayscale(80%);
-    }
-    .flight-info {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-    }
-    .flight-meta {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 4px;
-    }
-    .editable {
-      cursor: pointer;
-      min-width: 50px;
-      display: inline-block;
-      color: #ddd;
-    }
-    .mainline {
-      background: #3399ff;
-    }
-    .regional {
-      background: #ff6666;
-    }
-    .tf {
-      border-left-color: red;
-    }
-    .qt {
-      border-left-color: limegreen;
-    }
-    input.edit-field {
-      background: #000;
-      color: #fff;
-      border: 1px solid #444;
-      font-size: 32px;
-      width: 100px;
-    }
-    .weather-modal {
-      position: fixed;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 75vw;
-      height: 55vh;
-      background: black;
-      border: 2px solid white;
-      z-index: 10000;
-      border-radius: 12px;
-      overflow: hidden;
-      display: none;
-    }
-    .weather-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 9998;
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
 <body>
   <header>
     <img src="https://raw.githubusercontent.com/dsstaub/LavTracker/main/Image%2071.jpeg" alt="Logo" id="logo">
-    <input type="file" id="csvUpload" accept=".csv" style="font-size: 1.2rem; background: black; color: white; border: 1px solid white; padding: 5px 10px;" />
+    <input type="file" id="csvUpload" accept=".csv" />
     <div class="live-clock" id="live-clock">--ºF --:--:--</div>
   </header>
+
   <div class="weather-overlay" id="weather-overlay"></div>
   <div class="weather-modal" id="weather-modal">
-    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: black;">
-      <img src="https://wttr.in/KPIT.png?u" alt="KPIT Weather" style="max-width: 100%; max-height: 100%; object-fit: contain; transform: scale(1.2) translateX(110px); transform-origin: center center;" />
+    <div class="weather-content">
+      <img src="https://wttr.in/KPIT.png?u" alt="KPIT Weather" />
     </div>
   </div>
-  <div id="hourGrid"></div>
 
-  <script>
-    let currentTemp = '...';
-    async function fetchTemperature() {
-      try {
-        const res = await fetch('https://wttr.in/KPIT?format=%t&u');
-        const text = await res.text();
-        currentTemp = text.trim();
-      } catch {
-        currentTemp = '??ºF';
-      }
-    }
-    function updateClock() {
-      const now = new Date();
-      const h = now.getHours().toString().padStart(2, '0');
-      const m = now.getMinutes().toString().padStart(2, '0');
-      const s = now.getSeconds().toString().padStart(2, '0');
-      const tempStyle = currentTemp === '??ºF' ? `style=\"color: ${now.getSeconds() % 2 === 0 ? 'red' : 'white'}\"` : '';
-      document.getElementById('live-clock').innerHTML = `<span ${tempStyle}>${currentTemp}</span> ${h}:${m}:${s}`;
-    }
-    setInterval(updateClock, 1000);
-    setInterval(fetchTemperature, 300000);
-    fetchTemperature();
-    updateClock();
-    window.addEventListener("load", () => {
-      const clock = document.getElementById("live-clock");
-      const modal = document.getElementById("weather-modal");
-      const overlay = document.getElementById("weather-overlay");
-      clock.addEventListener("click", () => {
-        modal.style.display = "block";
-        overlay.style.display = "block";
-      });
-      overlay.addEventListener("click", () => {
-        modal.style.display = "none";
-        overlay.style.display = "none";
-      });
-    });
-  </script>
+  <div id="hourGrid"></div>
+  <script src="app.js"></script>
 </body>
 </html>
