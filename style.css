@@ -176,3 +176,13 @@ input.edit-field {
 .qt {
   border-left-color: limegreen;
 }
+
+.flight-info span,
+.flight-meta span {
+  font-family: monospace;
+  font-size: 34px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000;
+}
