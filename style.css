@@ -1,7 +1,7 @@
 body {
   background: #111;
   color: #fff;
-  font-family: sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
 }
 
@@ -27,15 +27,16 @@ header {
 .live-clock {
   background: #000;
   color: white;
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: bold;
-  padding: 8px 14px;
+  padding: 10px 16px;
   border-radius: 999px;
   font-family: monospace;
-  letter-spacing: 0.05em;
-  min-width: 16ch;
+  letter-spacing: 0.07em;
+  min-width: 18ch;
   text-align: center;
   cursor: pointer;
+  z-index: 1001;
 }
 
 .weather-modal {
@@ -91,7 +92,7 @@ header {
   display: flex;
   background: #1a1a1a;
   overflow: hidden;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.75);
   transition: opacity 0.3s, filter 0.3s;
 }
 
@@ -115,6 +116,10 @@ header {
   justify-content: space-between;
   padding: 10px 12px;
   position: relative;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
 }
 
 .card-content::before {
@@ -136,16 +141,14 @@ header {
 .flight-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 1.4rem;
-  font-weight: bold;
-  line-height: 1.4;
+  align-items: center;
 }
 
 .editable {
   cursor: pointer;
   min-width: 50px;
   display: inline-block;
-  color: #ffd;
+  color: #fffcb2;
   font-weight: bold;
   text-align: right;
 }
@@ -154,6 +157,6 @@ input.edit-field {
   background: #000;
   color: #fff;
   border: 1px solid #444;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   width: 100px;
 }
