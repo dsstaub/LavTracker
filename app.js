@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 1];
+const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 00, 01];
 const grid = document.getElementById("hourGrid");
 
 function createHourBlocks() {
