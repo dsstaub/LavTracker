@@ -130,14 +130,14 @@ document.getElementById("csvUpload").addEventListener("change", function (e) {
         if (hour === 0) hour = 24;
 
         // Status-based dimming logic from column 11
-        let statusClass = "";
-        const arrTypeUpper = f.arrType.toUpperCase();
-        if (arrTypeUpper === "IN") {
-          statusClass = "dimmed";
-        } else if (arrTypeUpper.includes("X")) {
-          statusClass = "dimmed-red";
-        }
+let statusClass = "";
+const cleanedArrType = f.arrType.trim().toUpperCase();
 
+if (cleanedArrType === "IN") {
+  statusClass = "dimmed";
+} else if (cleanedArrType.includes("X")) {
+  statusClass = "dimmed-red";
+}
         const card = document.createElement("div");
         card.className = `flight-card ${labelClass} ${carrierClass} ${statusClass}`;
 
