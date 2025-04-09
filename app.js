@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 1];
+const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 1];
 const grid = document.getElementById("hourGrid");
 
 function createHourBlocks() {
@@ -142,9 +142,8 @@ document.getElementById("csvUpload").addEventListener("change", function (e) {
 
         let hourMatch = f.eta.match(/^(\d{1,2})/);
         let hour = hourMatch ? parseInt(hourMatch[1], 10) : null;
-        if (hour === 0) hour = 24;
+        if (hour === 0 || hour === 24) hour = 23;
 
-        // Step 2: Add back shading if preserved
         const statusClass = preservedShading[f.flight] || "";
 
         const card = document.createElement("div");
