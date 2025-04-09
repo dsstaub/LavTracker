@@ -1,187 +1,107 @@
-let currentTemp = '...';
-async function fetchTemperature() {
-  try {
-    const res = await fetch('https://wttr.in/KPIT?format=%t&u');
-    const text = await res.text();
-    currentTemp = text.trim();
-  } catch {
-    currentTemp = '??ºF';
+let flights = [];
+let isDragging = false;
+let startY = 0;
+let scrollTop = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadFlightsFromStorage();
+  renderFlights();
+  setupDragScroll();
+
+  document.getElementById('flightForm').addEventListener('submit', handleFormSubmit);
+  document.getElementById('clearCards').addEventListener('click', clearAllFlights);
+});
+
+function handleFormSubmit(e) {
+  e.preventDefault();
+  const input = document.getElementById('flightInput');
+  const flightNumber = input.value.trim();
+  if (flightNumber.length !== 4 || isNaN(flightNumber)) return;
+
+  const newFlight = {
+    id: Date.now(),
+    number: flightNumber,
+    tail: '',
+    gate: '',
+  };
+
+  flights.push(newFlight);
+  saveFlightsToStorage();
+  renderFlights();
+  input.value = '';
+}
+
+function renderFlights() {
+  const container = document.getElementById('flightsContainer');
+  container.innerHTML = '';
+  flights.forEach(flight => {
+    const card = document.createElement('div');
+    card.className = 'flight-card';
+    card.innerHTML = `
+      <div class="card-row">
+        <strong>${flight.number}</strong>
+        <span contenteditable="true" class="gate" onblur="updateField(${flight.id}, 'gate', this.innerText)">${flight.gate}</span>
+      </div>
+      <div class="card-row">
+        <span contenteditable="true" class="tail" onblur="updateField(${flight.id}, 'tail', this.innerText)">${flight.tail}</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateField(id, field, value) {
+  const flight = flights.find(f => f.id === id);
+  if (flight) {
+    flight[field] = value.trim();
+    saveFlightsToStorage();
   }
 }
-function updateClock() {
-  const now = new Date();
-  const h = now.getHours().toString().padStart(2, '0');
-  const m = now.getMinutes().toString().padStart(2, '0');
-  const s = now.getSeconds().toString().padStart(2, '0');
-  document.getElementById('live-clock').innerHTML = `${currentTemp} ${h}:${m}:${s}`;
-}
-setInterval(updateClock, 1000);
-setInterval(fetchTemperature, 300000);
-fetchTemperature();
-updateClock();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const clock = document.getElementById("live-clock");
-  const modal = document.getElementById("weather-modal");
-  const overlay = document.getElementById("weather-overlay");
-
-  clock.addEventListener("click", () => {
-    modal.style.display = "block";
-    overlay.style.display = "block";
-  });
-
-  overlay.addEventListener("click", () => {
-    modal.style.display = "none";
-    overlay.style.display = "none";
-  });
-});
-
-const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 00, 01];
-const grid = document.getElementById("hourGrid");
-
-function createHourBlocks() {
-  grid.innerHTML = "";
-  hours.forEach(hour => {
-    const block = document.createElement("div");
-    block.className = "hour-block";
-
-    const label = document.createElement("div");
-    label.className = "hour-label";
-    label.textContent = hour;
-
-    const dropZone = document.createElement("div");
-    dropZone.id = `hour-${hour}`;
-    dropZone.className = "sortable-wrapper";
-
-    block.appendChild(label);
-    block.appendChild(dropZone);
-    grid.appendChild(block);
-
-    new Sortable(dropZone, {
-      group: 'shared',
-      animation: 150,
-      direction: 'horizontal',
-    });
-  });
+function saveFlightsToStorage() {
+  localStorage.setItem('flights', JSON.stringify(flights));
 }
 
-function makeEditable(el, field, flight) {
-  const input = document.createElement("input");
-  input.value = flight[field];
-  input.className = "edit-field";
-  input.onblur = () => {
-    flight[field] = input.value;
-    el.innerText = input.value || '[ ]';
-    el.style.display = "inline-block";
-    input.remove();
-  };
-  el.style.display = "none";
-  el.parentNode.insertBefore(input, el);
-  input.focus();
+function loadFlightsFromStorage() {
+  const stored = localStorage.getItem('flights');
+  if (stored) {
+    flights = JSON.parse(stored);
+  }
 }
 
-function attachLongPress(card) {
-  let pressTimer, wasDragging = false;
-  card.addEventListener("pointerdown", () => {
-    wasDragging = false;
-    pressTimer = setTimeout(() => {
-      if (!wasDragging) card.classList.toggle("dimmed");
-    }, 500);
-  });
-  card.addEventListener("pointerup", () => clearTimeout(pressTimer));
-  card.addEventListener("pointerleave", () => clearTimeout(pressTimer));
-  card.addEventListener("pointermove", () => { wasDragging = true; });
+function clearAllFlights() {
+  if (confirm('Are you sure you want to clear all cards?')) {
+    flights = [];
+    localStorage.removeItem('flights');
+    renderFlights();
+  }
 }
 
-document.getElementById("csvUpload").addEventListener("change", function (e) {
-  const file = e.target.files[0];
-  if (!file) return;
+function setupDragScroll() {
+  const container = document.getElementById('flightsWrapper');
 
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    transformHeader: h => h.trim(),
-    complete: function (results) {
-      const flights = results.data.filter(f =>
-        (f["Carrier"] || "").trim() === "AA" ||
-        (f["Arr. Type"] || "").toUpperCase().includes("TERM")
-      ).map(f => {
-        const values = Object.values(f);
-        return {
-          flight: values[2]?.trim() || "",
-          eta: values[8]?.trim() || "",
-          gate: values[13]?.trim() || "",
-          tail: values[26]?.trim() || "",
-          type: values[27]?.trim() || "",
-          arrType: values[11]?.trim() || "",
-          carrier: values[1]?.trim() || ""
-        };
-      });
-
-      // Step 1: Preserve shading by flight number
-      const existingCards = document.querySelectorAll('.flight-card');
-      const preservedShading = {};
-      existingCards.forEach(card => {
-        const flightText = card.querySelector('.flight-info span')?.innerText || "";
-        const flightMatch = flightText.match(/^(\d+)/);
-        if (flightMatch) {
-          const flightNumber = flightMatch[1];
-          if (card.classList.contains('dimmed-red')) {
-            preservedShading[flightNumber] = 'dimmed-red';
-          } else if (card.classList.contains('dimmed')) {
-            preservedShading[flightNumber] = 'dimmed';
-          }
-        }
-      });
-
-      createHourBlocks();
-
-      flights.forEach(f => {
-        const labelClass = f.arrType.toUpperCase() === "TERM" ? "tf" : "qt";
-        const carrierClass = f.carrier === "AA" ? "mainline" : "regional";
-
-        let hourMatch = f.eta.match(/^(\d{1,2})/);
-        let hour = hourMatch ? parseInt(hourMatch[1], 10) : null;
-        if (hour === 0 || hour === 24) hour = 23;
-
-        const statusClass = preservedShading[f.flight] || "";
-
-        const card = document.createElement("div");
-        card.className = `flight-card ${labelClass} ${carrierClass} ${statusClass}`;
-
-        const gateSpan = document.createElement("span");
-        gateSpan.innerText = f.gate || '[ ]';
-        gateSpan.className = "editable";
-        gateSpan.onclick = () => makeEditable(gateSpan, 'gate', f);
-
-        const tailSpan = document.createElement("span");
-        tailSpan.innerText = f.tail || '[ ]';
-        tailSpan.className = "editable";
-        tailSpan.onclick = () => makeEditable(tailSpan, 'tail', f);
-
-        card.innerHTML = `
-          <div class="flight-info">
-            <span>${f.flight} (${f.type})</span>
-          </div>
-          <div class="flight-meta">
-            <span>ETA: ${f.eta}</span>
-          </div>
-        `;
-
-        const infoRow = card.querySelector(".flight-info");
-        infoRow.appendChild(gateSpan);
-        const meta = card.querySelector(".flight-meta");
-        const editBox = document.createElement("div");
-        editBox.style.display = "flex";
-        editBox.style.gap = "10px";
-        editBox.appendChild(tailSpan);
-        meta.appendChild(editBox);
-
-        attachLongPress(card);
-
-        const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
-        target.appendChild(card);
-      });
-    }
+  container.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startY = e.pageY - container.offsetTop;
+    scrollTop = container.scrollTop;
+    container.classList.add('dragging');
   });
-});
+
+  container.addEventListener('mouseleave', () => {
+    isDragging = false;
+    container.classList.remove('dragging');
+  });
+
+  container.addEventListener('mouseup', () => {
+    isDragging = false;
+    container.classList.remove('dragging');
+  });
+
+  container.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const y = e.pageY - container.offsetTop;
+    const walk = (y - startY) * 1.5;
+    container.scrollTop = scrollTop - walk;
+  });
+}
