@@ -4,31 +4,50 @@ let startY = 0;
 let scrollTop = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadFlightsFromStorage();
+  loadFromStorage();
   renderFlights();
   setupDragScroll();
+  setupClearButton();
 
-  document.getElementById('flightForm').addEventListener('submit', handleFormSubmit);
-  document.getElementById('clearCards').addEventListener('click', clearAllFlights);
+  document.getElementById('csvUpload').addEventListener('change', handleCSVUpload);
 });
 
-function handleFormSubmit(e) {
-  e.preventDefault();
-  const input = document.getElementById('flightInput');
-  const flightNumber = input.value.trim();
-  if (flightNumber.length !== 4 || isNaN(flightNumber)) return;
+function handleCSVUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
 
-  const newFlight = {
-    id: Date.now(),
-    number: flightNumber,
-    tail: '',
-    gate: '',
-  };
+  Papa.parse(file, {
+    complete: function (results) {
+      const rows = results.data;
+      const newFlights = [];
 
-  flights.push(newFlight);
-  saveFlightsToStorage();
-  renderFlights();
-  input.value = '';
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const carrier = row[1];
+        const arrType = row[11];
+        const eta = row[8];
+        const gate = row[13];
+        const tail = row[26];
+        const aircraft = row[27];
+        const flightNum = row[0];
+
+        if (carrier === 'AA' && arrType) {
+          newFlights.push({
+            id: Date.now() + i,
+            number: flightNum,
+            eta,
+            gate,
+            tail,
+            aircraft
+          });
+        }
+      }
+
+      flights = flights.concat(newFlights);
+      saveToStorage();
+      renderFlights();
+    }
+  });
 }
 
 function renderFlights() {
@@ -40,10 +59,10 @@ function renderFlights() {
     card.innerHTML = `
       <div class="card-row">
         <strong>${flight.number}</strong>
-        <span contenteditable="true" class="gate" onblur="updateField(${flight.id}, 'gate', this.innerText)">${flight.gate}</span>
+        <span contenteditable="true" class="gate" onblur="updateField(${flight.id}, 'gate', this.innerText)">${flight.gate || ''}</span>
       </div>
       <div class="card-row">
-        <span contenteditable="true" class="tail" onblur="updateField(${flight.id}, 'tail', this.innerText)">${flight.tail}</span>
+        <span contenteditable="true" class="tail" onblur="updateField(${flight.id}, 'tail', this.innerText)">${flight.tail || ''}</span>
       </div>
     `;
     container.appendChild(card);
@@ -54,26 +73,31 @@ function updateField(id, field, value) {
   const flight = flights.find(f => f.id === id);
   if (flight) {
     flight[field] = value.trim();
-    saveFlightsToStorage();
+    saveToStorage();
   }
 }
 
-function saveFlightsToStorage() {
+function saveToStorage() {
   localStorage.setItem('flights', JSON.stringify(flights));
 }
 
-function loadFlightsFromStorage() {
+function loadFromStorage() {
   const stored = localStorage.getItem('flights');
   if (stored) {
     flights = JSON.parse(stored);
   }
 }
 
-function clearAllFlights() {
-  if (confirm('Are you sure you want to clear all cards?')) {
-    flights = [];
-    localStorage.removeItem('flights');
-    renderFlights();
+function setupClearButton() {
+  const btn = document.getElementById('clearCards');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      if (confirm('Clear all flight cards?')) {
+        flights = [];
+        localStorage.removeItem('flights');
+        renderFlights();
+      }
+    });
   }
 }
 
