@@ -123,12 +123,23 @@ document.getElementById("csvUpload").addEventListener("change", function (e) {
       flights.forEach(f => {
         const labelClass = f.arrType.toUpperCase() === "TERM" ? "tf" : "qt";
         const carrierClass = f.carrier === "AA" ? "mainline" : "regional";
+
+        // Get hour from ETA
         let hourMatch = f.eta.match(/^(\d{1,2})/);
         let hour = hourMatch ? parseInt(hourMatch[1], 10) : null;
         if (hour === 0) hour = 24;
 
+        // Status-based dimming logic from column 11
+        let statusClass = "";
+        const arrTypeUpper = f.arrType.toUpperCase();
+        if (arrTypeUpper === "IN") {
+          statusClass = "dimmed";
+        } else if (arrTypeUpper.includes("X")) {
+          statusClass = "dimmed-red";
+        }
+
         const card = document.createElement("div");
-        card.className = `flight-card ${labelClass} ${carrierClass}`;
+        card.className = `flight-card ${labelClass} ${carrierClass} ${statusClass}`;
 
         const gateSpan = document.createElement("span");
         gateSpan.innerText = f.gate || '[ ]';
