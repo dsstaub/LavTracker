@@ -118,26 +118,35 @@ document.getElementById("csvUpload").addEventListener("change", function (e) {
         };
       });
 
+      // Step 1: Preserve shading by flight number
+      const existingCards = document.querySelectorAll('.flight-card');
+      const preservedShading = {};
+      existingCards.forEach(card => {
+        const flightText = card.querySelector('.flight-info span')?.innerText || "";
+        const flightMatch = flightText.match(/^(\d+)/);
+        if (flightMatch) {
+          const flightNumber = flightMatch[1];
+          if (card.classList.contains('dimmed-red')) {
+            preservedShading[flightNumber] = 'dimmed-red';
+          } else if (card.classList.contains('dimmed')) {
+            preservedShading[flightNumber] = 'dimmed';
+          }
+        }
+      });
+
       createHourBlocks();
 
       flights.forEach(f => {
         const labelClass = f.arrType.toUpperCase() === "TERM" ? "tf" : "qt";
         const carrierClass = f.carrier === "AA" ? "mainline" : "regional";
 
-        // Get hour from ETA
         let hourMatch = f.eta.match(/^(\d{1,2})/);
         let hour = hourMatch ? parseInt(hourMatch[1], 10) : null;
         if (hour === 0) hour = 24;
 
-        // Status-based dimming logic from column 11
-let statusClass = "";
-const cleanedArrType = f.arrType.trim().toUpperCase();
+        // Step 2: Add back shading if preserved
+        const statusClass = preservedShading[f.flight] || "";
 
-if (cleanedArrType === "IN") {
-  statusClass = "dimmed";
-} else if (cleanedArrType.includes("X")) {
-  statusClass = "dimmed-red";
-}
         const card = document.createElement("div");
         card.className = `flight-card ${labelClass} ${carrierClass} ${statusClass}`;
 
