@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LavTracker</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
-  <title>LavTracker</title>
 </head>
 <body>
-  <h1>LavTracker</h1>
-  <input type="file" id="fileInput" />
-  <button id="resetBtn">Reset</button>
-  <button id="exportBtn">End-of-Shift Summary</button>
-  <div id="flightContainer"></div>
+  <div class="top-bar">
+    <h1>LavTracker</h1>
+    <input type="file" id="upload" />
+    <button id="export">End-of-Shift</button>
+    <button id="reset">Reset</button>
+  </div>
+  <div id="board"></div>
 
   <script src="app.js"></script>
   <script>
